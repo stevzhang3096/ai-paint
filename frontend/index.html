@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AiCanvas - AI Image Generator</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    background: #0f1117;
+    color: #e4e6ed;
+    min-height: 100vh;
+  }
+  .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+  header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 24px; background: #1a1c25; border-bottom: 1px solid #2a2d3a;
+  }
+  .logo { font-size: 20px; font-weight: 700; color: #8b5cf6; display: flex; align-items: center; gap: 10px; }
+  .logo span { color: #e4e6ed; }
+  /* 顶部横幅标语 */
+  .hero-banner {
+    text-align: center; padding: 10px 16px;
+    background: linear-gradient(135deg, #1e102b 0%, #1a1c25 100%);
+    border-bottom: 1px solid #2a2d3a;
+  }
+  .hero-banner h1 {
+    font-size: 16px; font-weight: 700; color: #c4b5fd;
+    margin: 0; display: inline-flex; align-items: center; gap: 8px;
+  }
+  .hero-banner h1 .highlight {
+    color: #f59e0b;
+  }
+  .hero-banner .sub {
+    font-size: 12px; color: #6b7280; margin-left: 8px;
+  }
+  /* 横幅分享按钮 */
+  .hero-share {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-left: 24px; cursor: pointer; position: relative;
+    padding: 6px 12px; border-radius: 20px;
+    color: #9ca3af; font-size: 13px;
+    border: 1px solid #2a2d3a; transition: all .2s;
+  }
+  .hero-share:hover { color: #a78bfa; border-color: #8b5cf6; background: #1e102b; }
+  .share-popup {
+    display: none; position: absolute; top: 100%; right: 0; margin-top: 8px;
+    min-width: 300px; background: #1a1c25; border: 1px solid #2a2d3a;
+    border-radius: 14px; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.4);
+    z-index: 200;
+  }
+  .share-popup.show { display: block; }
+  .sp-title { font-size: 14px; font-weight: 600; color: #c4c8d4; margin-bottom: 12px; }
+  .sp-btns { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 12px; }
+  .sp-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 8px 4px; border-radius: 10px;
+    color: #9ca3af; text-decoration: none; font-size: 10px; font-weight: 600;
+    transition: all .15s;
+  }
+  .sp-btn:hover { background: #2e1065; color: #a78bfa; }
+  .sp-btn svg { width: 20px; height: 20px; }
+  .sp-link-row {
+    display: flex; gap: 8px;
+  }
+  .sp-link-row input {
+    flex: 1; padding: 8px 10px; border-radius: 8px;
+    background: #13151d; border: 1px solid #2a2d3a;
+    color: #9ca3af; font-size: 12px; outline: none;
+  }
+  .sp-link-row input:focus { border-color: #8b5cf6; }
+  .sp-link-row .btn-download {
+    white-space: nowrap; padding: 8px 12px;
+  }
+  .header-right { display: flex; gap: 12px; align-items: center; position: relative; }
+  .user-menu-wrap { position: relative; display: none; }
+  .user-menu-trigger {
+    padding: 8px 16px; border-radius: 10px; border: 1px solid #3b3f4f;
+    background: transparent; color: #c4c8d4; cursor: pointer; font-size: 14px; font-weight: 600;
+    transition: all .2s;
+  }
+  .user-menu-trigger:hover { border-color: #8b5cf6; color: #a78bfa; }
+  .user-menu-trigger::after { content: ' \u25bc'; font-size: 10px; opacity: .6; }
+  .user-dropdown {
+    position: absolute; top: 100%; right: 0; margin-top: 6px;
+    min-width: 180px; background: #1a1c25; border: 1px solid #2a2d3a;
+    border-radius: 12px; padding: 6px; box-shadow: 0 8px 24px rgba(0,0,0,.4);
+    display: none; z-index: 50;
+  }
+  .user-dropdown.show { display: block; }
+  .user-dropdown-item {
+    display: block; width: 100%; padding: 10px 14px; border: none;
+    background: transparent; color: #c4c8d4; cursor: pointer;
+    font-size: 13px; text-align: left; border-radius: 8px;
+    transition: all .15s;
+  }
+  .user-dropdown-item:hover { background: #2a2d3a; color: #e4e6ed; }
+  .user-dropdown-divider { height: 1px; background: #2a2d3a; margin: 4px 8px; }
+  .credits-badge {
+    background: #1e293b; padding: 6px 14px; border-radius: 20px;
+    font-size: 13px; color: #a78bfa;
+  }
+  .btn {
+    padding: 8px 20px; border-radius: 10px; border: none; cursor: pointer;
+    font-size: 14px; font-weight: 600; transition: all .2s;
+  }
+  .btn-primary { background: #8b5cf6; color: #fff; }
+  .btn-primary:hover { background: #7c3aed; transform: translateY(-1px); }
+  .btn-outline { background: transparent; border: 1px solid #3b3f4f; color: #c4c8d4; }
+  .btn-outline:hover { border-color: #8b5cf6; color: #a78bfa; }
+  .btn-ghost { background: transparent; color: #9ca3af; border: none; }
+
+  .card {
+    background: #1a1c25; border: 1px solid #2a2d3a; border-radius: 16px;
+    padding: 24px; margin-top: 24px;
+  }
+  .card-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+  .card-label { font-size: 13px; color: #9ca3af; margin-bottom: 8px; }
+
+  .prompt-area { margin-bottom: 16px; }
+  .prompt-input {
+    width: 100%; min-height: 80px; padding: 14px; border-radius: 12px;
+    background: #13151d; border: 1px solid #2a2d3a; color: #e4e6ed;
+    font-size: 15px; resize: vertical; outline: none; transition: border .2s;
+    font-family: inherit;
+  }
+  .prompt-input:focus { border-color: #8b5cf6; }
+  .prompt-input::placeholder { color: #5b5f6e; }
+
+  .option-row {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
+  }
+  .option-chip {
+    padding: 8px 16px; border-radius: 20px; border: 1px solid #2a2d3a;
+    background: transparent; color: #c4c8d4; cursor: pointer; font-size: 13px;
+    transition: all .2s;
+  }
+  .option-chip.active { background: #2e1065; border-color: #8b5cf6; color: #a78bfa; }
+  .option-chip:hover { border-color: #8b5cf6; }
+
+  .btn-generate {
+    width: 100%; padding: 12px; border-radius: 12px; border: none;
+    background: linear-gradient(135deg, #7c3aed, #c026d3);
+    color: #fff; font-size: 16px; font-weight: 700; cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-generate:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(124,58,237,.4); }
+  .btn-generate:disabled { opacity: .5; cursor: not-allowed; }
+
+  .result-area {
+    margin-top: 16px; min-height: 200px; border-radius: 12px;
+    background: #13151d; border: 1px dashed #2a2d3a;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
+    flex-direction: column;
+  }
+  .result-placeholder { color: #5b5f6e; text-align: center; padding: 40px; }
+  .result-placeholder svg { margin-bottom: 12px; opacity: .3; }
+  .result-area img {
+    max-width: 100%; max-height: 600px; display: block; border-radius: 8px 8px 0 0;
+  }
+  .result-footer {
+    display: flex; gap: 8px; width: 100%; padding: 8px;
+    justify-content: center;
+  }
+  .btn-download {
+    padding: 6px 16px; border-radius: 8px; border: none;
+    background: #1e293b; color: #a78bfa; cursor: pointer;
+    font-size: 13px; transition: all .2s;
+  }
+  .btn-download:hover { background: #334155; color: #c4b5fd; }
+
+  .spinner {
+    width: 40px; height: 40px; border: 3px solid #2a2d3a;
+    border-top-color: #8b5cf6; border-radius: 50%; animation: spin .8s linear infinite;
+  }
+
+  /* 生成进度 */
+  .progress-bar-wrap {
+    width: 80%; max-width: 320px; height: 4px;
+    background: #2a2d3a; border-radius: 4px; overflow: hidden; margin-top: 12px;
+  }
+  .progress-bar-fill {
+    height: 100%; width: 0%; background: linear-gradient(90deg, #8b5cf6, #c026d3);
+    border-radius: 4px; transition: width .5s ease;
+  }
+  .gen-timer {
+    font-size: 13px; color: #6b7280; margin-top: 8px;
+  }
+  .gen-timer.warning { color: #f59e0b; }
+  .gen-timer.error { color: #ef4444; }
+  .btn-cancel-gen {
+    margin-top: 12px; padding: 6px 20px; border-radius: 8px;
+    border: 1px solid #ef4444; background: transparent; color: #ef4444;
+    cursor: pointer; font-size: 13px; transition: all .2s;
+  }
+  .btn-cancel-gen:hover { background: #450a0a; }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .history-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+  }
+  .history-item {
+    background: #13151d; border-radius: 10px; overflow: hidden;
+    border: 1px solid #2a2d3a; position: relative;
+  }
+  .history-item img { width: 100%; height: 160px; object-fit: cover; display: block; }
+  .history-item .prompt-text {
+    padding: 8px 10px 4px; font-size: 12px; color: #9ca3af;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .history-item .btn-download {
+    width: 100%; border-radius: 0; padding: 4px; font-size: 12px;
+    border-top: 1px solid #2a2d3a;
+  }
+
+  .pay-tabs {
+    display: flex; gap: 8px; margin-bottom: 16px;
+  }
+  .pay-tab {
+    flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #2a2d3a;
+    background: transparent; color: #c4c8d4; cursor: pointer;
+    font-size: 14px; font-weight: 600; transition: all .2s;
+  }
+  .pay-tab.active {
+    background: #2e1065; border-color: #8b5cf6; color: #a78bfa;
+  }
+  .pay-tab:hover { border-color: #8b5cf6; }
+  .plan-price-box {
+    padding: 20px; border-radius: 12px;
+    background: #13151d; border: 1px solid #2a2d3a; text-align: center;
+  }
+  .plan-price-box .price {
+    font-size: 36px; font-weight: 700; color: #8b5cf6;
+  }
+  .plan-price-box .price small {
+    font-size: 16px; color: #6b7280;
+  }
+  .plan-price-box .desc {
+    font-size: 14px; color: #9ca3af; margin-top: 8px;
+  }
+
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: #1a1c25; border: 1px solid #2a2d3a;
+    padding: 12px 20px; border-radius: 12px; font-size: 14px;
+    display: none; z-index: 200;
+    animation: slideUp .3s ease;
+  }
+  .toast.show { display: block; }
+  .toast.success { border-color: #22c55e; }
+  .toast.error { border-color: #ef4444; }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.7);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; display: none;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: #1a1c25; border: 1px solid #2a2d3a; border-radius: 16px;
+    padding: 32px; width: 90%; max-width: 420px;
+  }
+  .modal h2 { margin-bottom: 20px; }
+  .pwd-wrap { position: relative; }
+  .pwd-wrap input { width: 100%; padding: 12px 40px 12px 12px; margin-bottom: 12px; background: #13151d; border: 1px solid #2a2d3a; border-radius: 10px; color: #e4e6ed; font-size: 14px; outline: none; box-sizing: border-box; }
+  .pwd-wrap input:focus { border-color: #8b5cf6; }
+  .pwd-toggle {
+    position: absolute; right: 10px; top: 10px;
+    background: none; border: none; color: #6b7280; cursor: pointer;
+    font-size: 16px; padding: 4px; line-height: 1;
+  }
+  .pwd-toggle:hover { color: #a78bfa; }
+  .modal input {
+    width: 100%; padding: 12px; margin-bottom: 12px;
+    background: #13151d; border: 1px solid #2a2d3a; border-radius: 10px;
+    color: #e4e6ed; font-size: 14px; outline: none;
+  }
+  .modal input:focus { border-color: #8b5cf6; }
+  .modal .error { color: #f87171; font-size: 13px; margin-bottom: 8px; display: none; }
+  .modal .switch-link { text-align: center; margin-top: 12px; font-size: 13px; color: #6b7280; }
+  .modal .switch-link a { color: #8b5cf6; cursor: pointer; }
+
+  @media (max-width: 600px) {
+    .plans-grid { grid-template-columns: 1fr; }
+    header { flex-wrap: wrap; gap: 8px; }
+  }
+  /* 价格对比悬浮窗 */
+  .price-badge {
+    position: fixed; bottom: 24px; right: 24px;
+    background: linear-gradient(135deg, #1a1c25 0%, #1e102b 100%);
+    border: 1px solid #8b5cf6;
+    border-radius: 16px;
+    padding: 16px 18px;
+    z-index: 999;
+    box-shadow: 0 8px 32px rgba(139,92,246,.25);
+    animation: pbFadeIn .5s ease-out;
+    min-width: 210px;
+    transition: all .3s;
+  }
+  .price-badge:hover {
+    box-shadow: 0 12px 40px rgba(139,92,246,.35);
+    transform: translateY(-2px);
+  }
+  @keyframes pbFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .pb-icon { font-size: 20px; margin-bottom: 8px; }
+  .pb-title { font-size: 13px; font-weight: 700; color: #a78bfa; margin-bottom: 10px; }
+  .pb-grid { display: flex; flex-direction: column; gap: 2px; }
+  .pb-item { display: flex; justify-content: space-between; align-items: center; padding: 2px 0; font-size: 12px; }
+  .pb-name { color: #9ca3af; }
+  .pb-name.ours { color: #e4e6ed; font-weight: 600; }
+  .pb-price { font-weight: 600; }
+  .pb-price.old { color: #6b7280; text-decoration: line-through; text-decoration-color: #ef4444; font-weight: 400; }
+  .pb-price.new { color: #c4b5fd; font-weight: 700; }
+  .pb-divider { height: 1px; background: #2a2d3a; margin: 6px 0; }
+  .pb-save { text-align: center; font-size: 11px; color: #8b5cf6; font-weight: 700; margin-top: 6px; }
+  @media (max-width: 600px) {
+    .price-badge { bottom: 16px; right: 12px; padding: 12px 14px; min-width: 170px; }
+    .pb-title { font-size: 12px; }
+    .pb-item { font-size: 11px; }
+  }
+  /* 价格对比悬浮窗 */
+  .price-badge {
+    position: fixed; bottom: 24px; right: 24px;
+    background: linear-gradient(135deg, #1a1c25 0%, #1e102b 100%);
+    border: 1px solid #8b5cf6;
+    border-radius: 16px;
+    padding: 16px 18px;
+    z-index: 999;
+    box-shadow: 0 8px 32px rgba(139,92,246,.25);
+    animation: pbFadeIn .5s ease-out;
+    min-width: 210px;
+    transition: all .3s;
+  }
+  .price-badge:hover {
+    box-shadow: 0 12px 40px rgba(139,92,246,.35);
+    transform: translateY(-2px);
+  }
+  @keyframes pbFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .pb-icon { font-size: 20px; margin-bottom: 8px; }
+  .pb-title { font-size: 13px; font-weight: 700; color: #a78bfa; margin-bottom: 10px; }
+  .pb-grid { display: flex; flex-direction: column; gap: 2px; }
+  .pb-item { display: flex; justify-content: space-between; align-items: center; padding: 2px 0; font-size: 12px; }
+  .pb-name { color: #9ca3af; }
+  .pb-name.ours { color: #e4e6ed; font-weight: 600; }
+  .pb-price { font-weight: 600; }
+  .pb-price.old { color: #6b7280; text-decoration: line-through; text-decoration-color: #ef4444; font-weight: 400; }
+  .pb-price.new { color: #c4b5fd; font-weight: 700; }
+  .pb-divider { height: 1px; background: #2a2d3a; margin: 6px 0; }
+  .pb-save { text-align: center; font-size: 11px; color: #8b5cf6; font-weight: 700; margin-top: 6px; }
+  @media (max-width: 600px) {
+    .price-badge { bottom: 16px; right: 12px; padding: 12px 14px; min-width: 170px; }
+    .pb-title { font-size: 12px; }
+    .pb-item { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Ai<span>Canvas</span></div>
+  <div class="header-right">
+
+    <span class="credits-badge" id="creditsBadge">🪙 0 张</span>
+    <button class="btn btn-outline" id="loginBtn" onclick="showLogin()">登录</button>
+    <button class="btn btn-primary" id="topupBtn" onclick="showTopup()" style="display:none">充值</button>
+    <div class="user-menu-wrap" id="userMenuWrap">
+      <button class="user-menu-trigger" id="userMenuTrigger"></button>
+      <div class="user-dropdown" id="userDropdown">
+        <button class="user-dropdown-item" onclick="showChangePwd()">🔒 修改密码</button>
+        <button class="user-dropdown-item" onclick="scrollToHistory()">📚 生成记录</button>
+        <button class="user-dropdown-item" onclick="showOrders()">💰 充值记录</button>
+        <div class="user-dropdown-divider"></div>
+        <button class="user-dropdown-item" onclick="logout()" style="color:#f87171">🚪 退出登录</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- 顶部横幅 -->
+<div class="hero-banner">
+  <h1>🔥 最便宜的图片生成网站 <span class="highlight">比竞品便宜 50%+</span> <span class="sub">低至 $0.020/张</span></h1>
+  <!-- 分享图标 -->
+  <div class="hero-share" onclick="toggleSharePopup()" title="分享给朋友">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    <span>分享</span>
+    <div class="share-popup" id="sharePopup">
+      <div class="sp-title">分享 AiCanvas</div>
+      <div class="sp-btns">
+        <a href="javascript:void(0)" onclick="shareTo('x')" class="sp-btn" title="X">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          <span>X</span>
+        </a>
+        <a href="javascript:void(0)" onclick="shareTo('facebook')" class="sp-btn" title="Facebook">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          <span>FB</span>
+        </a>
+        <a href="javascript:void(0)" onclick="shareTo('telegram')" class="sp-btn" title="Telegram">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.127-.022.284-.063.402l-2.546 10.94c-.051.225-.177.408-.34.508a.677.677 0 0 1-.396.115.703.703 0 0 1-.362-.089l-4.008-2.4-1.743 1.404a.333.333 0 0 1-.262.076.306.306 0 0 1-.214-.139.555.555 0 0 1-.092-.25l-.789-3.784-.004-.02s-.015-.075.058-.125c.088-.06.234-.088.347-.073l4.008 1.916c.108.052.223.032.283-.023.06-.055.073-.144.058-.225l2.612-9.908c.009-.035.012-.07.01-.103 0-.093-.03-.168-.068-.22a.344.344 0 0 0-.17-.11c-.062-.022-.134-.014-.19-.008-.088.009-.188.041-.283.075l-10.484 4.08c-.384.15-.64.285-.797.41-.12.096-.196.195-.215.32-.02.125.027.243.138.353.263.26.769.513 1.262.735l.018.008c.49.22 1.063.48 1.35.646.153.089.333.127.508.103a.738.738 0 0 0 .39-.192l6.96-5.596c-.003.002-.003.005-.004.007z"/></svg>
+          <span>TG</span>
+        </a>
+        <a href="javascript:void(0)" onclick="shareTo('whatsapp')" class="sp-btn" title="WhatsApp">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          <span>WA</span>
+        </a>
+        <a href="javascript:void(0)" onclick="shareTo('reddit')" class="sp-btn" title="Reddit">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.208.674-.331 1.074-.331.448 0 .872.166 1.188.471a1.64 1.64 0 0 1 .477 1.196c0 .464-.19.901-.5 1.205.022.15.032.303.032.458 0 2.64-3.288 4.79-7.34 4.79-4.052 0-7.34-2.15-7.34-4.79 0-.155.01-.308.032-.457a1.64 1.64 0 0 1-.5-1.205c0-.435.177-.86.477-1.196.316-.305.74-.471 1.188-.471.4 0 .766.123 1.074.33 1.194-.855 2.85-1.416 4.674-1.488l.785-3.67a.44.44 0 0 1 .074-.168.453.453 0 0 1 .362-.207l3.22-.677a1.246 1.246 0 0 1 1.17-.878zM9.82 12.18c-.464 0-.86.396-.86.86 0 .463.396.86.86.86.463 0 .86-.397.86-.86a.863.863 0 0 0-.86-.86zm4.35 0a.863.863 0 0 0-.86.86c0 .463.397.86.86.86.464 0 .86-.397.86-.86a.863.863 0 0 0-.86-.86zm-2.587 1.904c-.2 0-.36.078-.464.187-.105.109-.151.265-.075.41.237.453.676.735 1.255.735.58 0 1.018-.282 1.256-.735.076-.145.03-.301-.075-.41-.105-.109-.265-.187-.465-.187-.493 0-.716.332-.716.332s-.223-.332-.716-.332z"/></svg>
+          <span>Reddit</span>
+        </a>
+      </div>
+      <div class="sp-link-row">
+        <input type="text" id="shareLinkInput" readonly value="https://paint.deepapi.pro" onclick="this.select()">
+        <button class="btn-download" onclick="copyPageLink()">📋 复制链接</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="card-title">🎨 生成图片</div>
+    <div class="prompt-area">
+      <textarea class="prompt-input" id="promptInput" placeholder="描述你想要的图片，支持中英文...&#10;例如：a cute cat wearing a wizard hat, digital art style"></textarea>
+    </div>
+    <div class="card-label">📐 选择模型</div>
+    <div class="option-row" id="modelRow"></div>
+    <div class="card-label">📏 选择尺寸</div>
+    <div class="option-row" id="sizeRow"></div>
+    <button class="btn-generate" id="genBtn" onclick="generate()">✨ 生成</button>
+    <div class="result-area" id="resultArea">
+      <div class="result-placeholder">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        <p>输入 prompt，点击生成</p>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="card" id="historyCard" style="display:none">
+    <div class="card-title">📚 生成历史</div>
+    <div class="history-grid" id="historyGrid"></div>
+  </div>
+
+</div>
+
+<!-- 充值套餐 Modal -->
+<div class="modal-overlay" id="plansModal">
+  <div class="modal" style="max-width:520px">
+    <h2>💎 选择充值方式</h2>
+    <p style="color:#9ca3af;font-size:13px;margin-bottom:16px">选择支付方式完成充值，自动到账</p>
+
+    <!-- 价格展示区：只显示一个固定价位 -->
+    <div id="planPriceDisplay" style="text-align:center;margin-bottom:20px;background:#13151d;border-radius:12px;padding:20px;border:1px solid #2a2d3a"></div>
+
+    <!-- 两种支付方式选项卡 -->
+    <div class="pay-tabs" style="display:flex;gap:8px;margin-bottom:16px">
+      <button class="pay-tab active" id="payTabLS" onclick="switchPayMethod('ls')">💳 信用卡</button>
+      <button class="pay-tab" id="payTabUSDT" onclick="switchPayMethod('usdt')">₿ USDT TRC-20</button>
+    </div>
+
+    <!-- LemonSqueezy 支付面板 -->
+    <div id="lsPayPanel">
+      <p style="color:#9ca3af;font-size:13px;text-align:center;margin-bottom:16px">使用信用卡/借记卡支付，即时到账</p>
+      <a id="lsCheckoutBtn" href="https://stevstore.lemonsqueezy.com/checkout/buy/9f29f9f3-9700-4e03-ad65-192450143768" target="_blank" style="text-decoration:none">
+        <button class="btn btn-primary" style="width:100%;padding:14px;font-size:16px">💳 信用卡支付 <span id="lsPriceLabel">$5</span></button>
+      </a>
+      <p style="font-size:12px;color:#6b7280;text-align:center;margin-top:8px">安全支付由 LemonSqueezy 提供</p>
+    </div>
+
+    <!-- USDT 支付面板 -->
+    <div id="usdtPayPanel" style="display:none">
+      <p style="color:#9ca3af;font-size:13px;text-align:center;margin-bottom:12px">转账 USDT 到下方 TRC-20 地址，自动到账</p>
+      <div style="text-align:center">
+        <p style="font-size:12px;color:#6b7280;margin-bottom:4px">📍 TRC-20 收款地址</p>
+        <code style="font-size:11px;color:#a78bfa;word-break:break-all;display:block;background:#13151d;padding:10px;border-radius:8px" id="walletAddr">TQ5dyshgSMrBxbuQMvSbfTqconC7Cze2q7</code>
+        <button class="btn btn-ghost" style="font-size:12px;margin-top:6px" onclick="copyAddr()">📋 复制地址</button>
+      </div>
+      <div style="margin-top:16px">
+        <label style="font-size:12px;color:#9ca3af;display:block;margin-bottom:6px">🔗 交易哈希 (TxID)</label>
+        <input type="text" id="usdtTxidInput" placeholder="粘贴 TRC-20 转账的 TxID" style="width:100%;padding:12px;background:#13151d;border:1px solid #2a2d3a;border-radius:10px;color:#e4e6ed;font-size:14px;outline:none;box-sizing:border-box">
+      </div>
+      <div id="usdtCheckStatus" style="text-align:center;margin:10px 0;font-size:13px;color:#9ca3af;display:none"></div>
+      <button class="btn btn-primary" id="usdtCheckBtn" onclick="checkUsdtPayment()" style="width:100%;padding:12px;margin-top:8px">🔍 验证到账</button>
+    </div>
+
+    <div style="text-align:center;margin-top:16px">
+      <button class="btn btn-outline" onclick="closePlansModal()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- 登录Modal -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <h2 id="modalTitle">登录</h2>
+    <div class="error" id="loginError"></div>
+    <input type="email" id="emailInput" placeholder="邮箱">
+    <div class="pwd-wrap">
+      <input type="password" id="passwordInput" placeholder="密码">
+      <button class="pwd-toggle" onclick="togglePwd('passwordInput', this)">\ud83d\udc41</button>
+    </div>
+    <button class="btn btn-primary" style="width:100%;padding:12px" id="modalActionBtn" onclick="handleAuth()">登录</button>
+    <div class="switch-link">
+      <span id="switchText">还没有账号？<a id="switchAuth">去注册</a></span>
+    </div>
+    <div class="switch-link">
+      <a id="forgotPwdLink" style="color:#6b7280;font-size:12px">忘记密码？</a>
+    </div>
+  </div>
+</div>
+
+<!-- 找回密码 Modal -->
+<div class="modal-overlay" id="forgotModal">
+  <div class="modal">
+    <h2>🔑 找回密码</h2>
+    <div class="error" id="forgotError"></div>
+    <div id="forgotStep1">
+      <input type="email" id="forgotEmail" placeholder="注册时使用的邮箱">
+      <button class="btn btn-primary" style="width:100%;padding:12px" onclick="sendVerifyCode()">发送验证码</button>
+    </div>
+    <div id="forgotStep2" style="display:none">
+      <input type="text" id="forgotCode" placeholder="输入6位验证码" maxlength="6" style="letter-spacing:4px;text-align:center;font-size:18px">
+      <div class="pwd-wrap">
+        <input type="password" id="forgotNewPwd" placeholder="新密码（至少4位）">
+        <button class="pwd-toggle" onclick="togglePwd('forgotNewPwd', this)">\ud83d\udc41</button>
+      </div>
+      <button class="btn btn-primary" style="width:100%;padding:12px" onclick="resetPassword()">重置密码</button>
+    </div>
+    <div class="switch-link">
+      <a id="backToLogin" style="color:#8b5cf6;cursor:pointer">← 返回登录</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let state = {
+  user: null,
+  models: {},
+  sizes: [],
+  selectedModel: 'glm-image',
+  selectedSize: '1280x1280'
+};
+
+function downloadImage(url) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'aic_' + Date.now() + '.png';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  toast('\u2b07\ufe0f \u5f00\u59cb\u4e0b\u8f7d');
+}
+
+// ── Init ──
+(async function init() {
+  await loadModels();
+  await checkLogin();
+})();
+
+async function checkLogin() {
+  const res = await fetch('/api/me', { credentials: 'include' });
+  const data = await res.json();
+  if (data.user) {
+    state.user = data.user;
+    updateUI();
+  }
+}
+
+async function loadModels() {
+  try {
+    const res = await fetch('/api/models');
+    const data = await res.json();
+    state.models = data.models;
+    state.sizes = data.sizes || ['1280x1280'];
+    renderModelChips();
+    renderSizeChips();
+  } catch(e) {}
+}
+
+function renderModelChips() {
+  const row = document.getElementById('modelRow');
+  row.innerHTML = '';
+  for (const [key, m] of Object.entries(state.models)) {
+    const chip = document.createElement('button');
+    chip.className = 'option-chip' + (key === state.selectedModel ? ' active' : '');
+    chip.textContent = m.name;
+    chip.onclick = () => { state.selectedModel = key; renderModelChips(); };
+    row.appendChild(chip);
+  }
+}
+
+function renderSizeChips() {
+  const row = document.getElementById('sizeRow');
+  row.innerHTML = '';
+  state.sizes.forEach(size => {
+    const label = typeof size === 'string' ? size : size.label;
+    const value = typeof size === 'string' ? size : size.value;
+    const chip = document.createElement('button');
+    chip.className = 'option-chip' + (value === state.selectedSize ? ' active' : '');
+    chip.textContent = label;
+    chip.onclick = () => { state.selectedSize = value; renderSizeChips(); };
+    row.appendChild(chip);
+  });
+}
+
+function updateUI() {
+  const loginBtn = document.getElementById('loginBtn');
+  const topupBtn = document.getElementById('topupBtn');
+  const creditsBadge = document.getElementById('creditsBadge');
+  const userMenuWrap = document.getElementById('userMenuWrap');
+  if (state.user) {
+    loginBtn.style.display = 'none';
+    topupBtn.style.display = 'inline-block';
+    userMenuWrap.style.display = 'inline-block';
+    document.getElementById('userMenuTrigger').textContent = state.user.email;
+    creditsBadge.textContent = '\ud83e\ude99 ' + state.user.credits + ' \u5f20';
+    document.getElementById('historyCard').style.display = 'block';
+    loadHistory();
+  } else {
+    loginBtn.style.display = 'inline-block';
+    topupBtn.style.display = 'none';
+    userMenuWrap.style.display = 'none';
+    creditsBadge.textContent = '\ud83e\ude99 0 \u5f20';
+    document.getElementById('historyCard').style.display = 'none';
+    document.getElementById('historyGrid').innerHTML = '';
+  }
+  creditsBadge.textContent = state.user ? `\ud83e\ude99 ${state.user.credits} \u5f20` : '\ud83e\ude99 0 \u5f20';
+}
+
+// ── Auth ──
+let isLogin = true;
+
+function showLogin() { isLogin = true; openModal(); }
+function showRegister() { isLogin = false; openModal(); }
+
+function openModal() {
+  document.getElementById('modalTitle').textContent = isLogin ? '\u767b\u5f55' : '\u6ce8\u518c';
+  document.getElementById('modalActionBtn').textContent = isLogin ? '\u767b\u5f55' : '\u6ce8\u518c';
+  document.getElementById('switchText').innerHTML = isLogin
+    ? '\u8fd8\u6ca1\u6709\u8d26\u53f7\uff1f<a id="switchAuth">\u53bb\u6ce8\u518c</a>'
+    : '\u5df2\u6709\u8d26\u53f7\uff1f<a id="switchAuth">\u53bb\u767b\u5f55</a>';
+  document.getElementById('switchAuth').onclick = () => { isLogin = !isLogin; openModal(); };
+  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('emailInput').value = '';
+  document.getElementById('passwordInput').value = '';
+  document.getElementById('loginModal').classList.add('show');
+}
+
+// 点击遮罩关闭弹窗
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('show');
+  });
+});
+
+async function handleAuth() {
+  const email = document.getElementById('emailInput').value.trim();
+  const password = document.getElementById('passwordInput').value.trim();
+  const errorEl = document.getElementById('loginError');
+  if (!email || !password) { errorEl.textContent = '\u8bf7\u586b\u5199\u5b8c\u6574'; errorEl.style.display = 'block'; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errorEl.textContent = '\u90ae\u7bb1\u683c\u5f0f\u4e0d\u6b63\u786e';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  const endpoint = isLogin ? '/api/login' : '/api/register';
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({email, password}),
+    credentials: 'include'
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    errorEl.textContent = data.error || '\u64cd\u4f5c\u5931\u8d25';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  document.getElementById('loginModal').classList.remove('show');
+  state.user = data.user;
+  updateUI();
+  toast(isLogin ? '\u2705 \u767b\u5f55\u6210\u529f' : '\u2705 \u6ce8\u518c\u6210\u529f\uff0c\u8d60\u9001 10 \u5f20\u514d\u8d39\u989d\u5ea6\uff01', 'success');
+}
+
+async function logout() {
+  await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+  state.user = null;
+  updateUI();
+  toast('\u5df2\u9000\u51fa', 'success');
+}
+
+// ── 找回密码 ──
+document.addEventListener('DOMContentLoaded', function() {
+  const forgotLink = document.getElementById('forgotPwdLink');
+  if (forgotLink) forgotLink.onclick = showForgotPwd;
+  const backLink = document.getElementById('backToLogin');
+  if (backLink) backLink.onclick = function() {
+    closeModal('forgotModal');
+    showLogin();
+  };
+});
+
+function showForgotPwd() {
+  closeModal('loginModal');
+  document.getElementById('forgotStep1').style.display = 'block';
+  document.getElementById('forgotStep2').style.display = 'none';
+  document.getElementById('forgotEmail').value = '';
+  document.getElementById('forgotCode').value = '';
+  document.getElementById('forgotNewPwd').value = '';
+  document.getElementById('forgotError').style.display = 'none';
+  document.getElementById('forgotModal').classList.add('show');
+}
+
+async function sendVerifyCode() {
+  const email = document.getElementById('forgotEmail').value.trim();
+  const errorEl = document.getElementById('forgotError');
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errorEl.textContent = '\u8bf7\u8f93\u5165\u6709\u6548\u90ae\u7bb1';
+    errorEl.style.display = 'block';
+    return;
+  }
+  errorEl.style.display = 'none';
+  try {
+    const res = await fetch('/api/forgot-password', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email})
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      errorEl.textContent = data.error || '\u53d1\u9001\u5931\u8d25';
+      errorEl.style.display = 'block';
+      return;
+    }
+    document.getElementById('forgotStep1').style.display = 'none';
+    document.getElementById('forgotStep2').style.display = 'block';
+    toast(data.message || '\u9a8c\u8bc1\u7801\u5df2\u53d1\u9001', 'success');
+  } catch(e) {
+    errorEl.textContent = '\u7f51\u7edc\u9519\u8bef';
+    errorEl.style.display = 'block';
+  }
+}
+
+async function resetPassword() {
+  const email = document.getElementById('forgotEmail').value.trim();
+  const code = document.getElementById('forgotCode').value.trim();
+  const newPwd = document.getElementById('forgotNewPwd').value;
+  const errorEl = document.getElementById('forgotError');
+  if (!code || code.length !== 6) {
+    errorEl.textContent = '\u8bf7\u8f93\u5165\u0036\u4f4d\u9a8c\u8bc1\u7801';
+    errorEl.style.display = 'block';
+    return;
+  }
+  if (!newPwd || newPwd.length < 4) {
+    errorEl.textContent = '\u5bc6\u7801\u81f3\u5c11\u0034\u4f4d';
+    errorEl.style.display = 'block';
+    return;
+  }
+  errorEl.style.display = 'none';
+  try {
+    const res = await fetch('/api/reset-password', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email, code, new_password: newPwd})
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      errorEl.textContent = data.error || '\u91cd\u7f6e\u5931\u8d25';
+      errorEl.style.display = 'block';
+      return;
+    }
+    closeModal('forgotModal');
+    toast('\u2705 \u5bc6\u7801\u91cd\u7f6e\u6210\u529f\uff0c\u8bf7\u91cd\u65b0\u767b\u5f55', 'success');
+    showLogin();
+  } catch(e) {
+    errorEl.textContent = '\u7f51\u7edc\u9519\u8bef';
+    errorEl.style.display = 'block';
+  }
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+// ── 密码可见切换 ──
+function togglePwd(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '\ud83d\udc41\u200d\ud83d\udde8';
+  } else {
+    input.type = 'password';
+    btn.textContent = '\ud83d\udc41';
+  }
+}
+
+// ── 用户菜单 ──
+// 鼠标悬停显示/隐藏菜单
+document.addEventListener('DOMContentLoaded', function() {
+  const wrap = document.getElementById('userMenuWrap');
+  const dropdown = document.getElementById('userDropdown');
+  let hideTimer = null;
+  if (wrap && dropdown) {
+    wrap.addEventListener('mouseenter', function() {
+      clearTimeout(hideTimer);
+      dropdown.classList.add('show');
+    });
+    wrap.addEventListener('mouseleave', function() {
+      hideTimer = setTimeout(function() {
+        dropdown.classList.remove('show');
+      }, 300);
+    });
+    dropdown.addEventListener('mouseenter', function() {
+      clearTimeout(hideTimer);
+    });
+    dropdown.addEventListener('mouseleave', function() {
+      hideTimer = setTimeout(function() {
+        dropdown.classList.remove('show');
+      }, 300);
+    });
+    // 点击菜单项关闭
+    dropdown.querySelectorAll('.user-dropdown-item').forEach(function(item) {
+      item.addEventListener('click', function() {
+        dropdown.classList.remove('show');
+      });
+    });
+  }
+});
+
+function scrollToHistory() {
+  const el = document.getElementById('historyCard');
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── 修改密码 ──
+function showChangePwd() {
+  // 第一次打开时创建模态框
+  let modal = document.getElementById('changePwdModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.id = 'changePwdModal';
+    modal.innerHTML =
+      '<div class="modal" onclick="event.stopPropagation()">' +
+        '<h2>🔒 修改密码</h2>' +
+        '<div class="error" id="changePwdError"></div>' +
+        '<div class="pwd-wrap"><input type="password" id="oldPwdInput" placeholder="\u5f53\u524d\u5bc6\u7801"><button class="pwd-toggle" onclick="togglePwd(\'oldPwdInput\', this)">\ud83d\udc41</button></div>' +
+        '<div class="pwd-wrap"><input type="password" id="newPwdInput" placeholder="\u65b0\u5bc6\u7801\uff08\u81f3\u5c114\u4f4d\uff09"><button class="pwd-toggle" onclick="togglePwd(\'newPwdInput\', this)">\ud83d\udc41</button></div>' +
+        '<button class="btn btn-primary" style="width:100%;padding:12px" onclick="doChangePwd()">修改密码</button>' +
+        '<div class="switch-link"><a onclick="closeModal(\'changePwdModal\')" style="color:#6b7280;cursor:pointer">\u53d6\u6d88</a></div>' +
+      '</div>';
+    modal.addEventListener('click', function() { closeModal('changePwdModal'); });
+    document.body.appendChild(modal);
+  }
+  document.getElementById('changePwdError').style.display = 'none';
+  document.getElementById('oldPwdInput').value = '';
+  document.getElementById('newPwdInput').value = '';
+  modal.classList.add('show');
+}
+
+async function doChangePwd() {
+  const oldPwd = document.getElementById('oldPwdInput').value;
+  const newPwd = document.getElementById('newPwdInput').value;
+  const errorEl = document.getElementById('changePwdError');
+  if (!oldPwd || !newPwd) {
+    errorEl.textContent = '\u8bf7\u586b\u5199\u5b8c\u6574';
+    errorEl.style.display = 'block'; return;
+  }
+  if (newPwd.length < 4) {
+    errorEl.textContent = '\u65b0\u5bc6\u7801\u81f3\u5c114\u4f4d';
+    errorEl.style.display = 'block'; return;
+  }
+  try {
+    const res = await fetch('/api/change-password', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({old_password: oldPwd, new_password: newPwd}),
+      credentials: 'include'
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      errorEl.textContent = data.error || '\u4fee\u6539\u5931\u8d25';
+      errorEl.style.display = 'block'; return;
+    }
+    closeModal('changePwdModal');
+    toast('\u2705 \u5bc6\u7801\u4fee\u6539\u6210\u529f', 'success');
+  } catch(e) {
+    errorEl.textContent = '\u7f51\u7edc\u9519\u8bef';
+    errorEl.style.display = 'block';
+  }
+}
+
+// ── 生成队列 & 超时提示 ──
+let _genAbortController = null;
+let _genTimerInterval = null;
+
+function renderGeneratingUI(seconds) {
+  const area = document.getElementById('resultArea');
+  let statusText = '';
+  let statusClass = '';
+  if (seconds >= 120) {
+    statusClass = ' error';
+    statusText = '\u23f0 \u4f3c\u4e4e\u8d85\u65f6\u4e86\uff0c\u8bf7\u70b9\u51fb\u53d6\u6d88\u91cd\u8bd5';
+  } else if (seconds >= 90) {
+    statusClass = ' warning';
+    statusText = '\u26a0\ufe0f \u8d85\u8fc7\u9884\u671f\u65f6\u95f4\uff0c\u8bf7\u8010\u5fc3\u7b49\u5f85';
+  }
+  area.innerHTML =
+    '<div class="result-placeholder">' +
+      '<p style="margin-top:12px;font-size:15px">\ud83c\udfa8 AI \u6b63\u5728\u521b\u4f5c...</p>' +
+      '<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>' +
+      (statusText ? '<div class="gen-timer' + statusClass + '" id="genTimer">' + statusText + '</div>' : '') +
+      '<button class="btn-cancel-gen" id="cancelGenBtn" onclick="cancelGeneration()">\u2715 \u53d6\u6d88\u751f\u6210</button>' +
+    '</div>';
+  const pct = Math.min(100, (seconds / 90) * 100);
+  const fill = document.getElementById('progressFill');
+  if (fill) fill.style.width = pct + '%';
+}
+
+function cancelGeneration() {
+  if (_genAbortController) {
+    _genAbortController.abort();
+    _genAbortController = null;
+  }
+  if (_genTimerInterval) {
+    clearInterval(_genTimerInterval);
+    _genTimerInterval = null;
+  }
+  const area = document.getElementById('resultArea');
+  area.innerHTML = '<div class="result-placeholder"><p style="color:#6b7280">\u2715 \u5df2\u53d6\u6d88\u751f\u6210</p></div>';
+  document.getElementById('genBtn').disabled = false;
+  document.getElementById('genBtn').textContent = '\u2728 \u751f\u6210';
+}
+
+async function generate() {
+  const prompt = document.getElementById('promptInput').value.trim();
+  if (!prompt) { toast('\u26a0\ufe0f \u8bf7\u8f93\u5165 prompt', 'error'); return; }
+  if (!state.user) { toast('\u26a0\ufe0f \u8bf7\u5148\u767b\u5f55', 'error'); return; }
+  if (state.user.credits < 1) {
+    toast('\ud83e\ude99 \u989d\u5ea6\u4e0d\u8db3\uff0c\u8bf7\u5148\u5145\u503c', 'error');
+    showPlansModal();
+    return;
+  }
+
+  // 清理上一次
+  if (_genAbortController) _genAbortController.abort();
+  _genAbortController = new AbortController();
+  if (_genTimerInterval) clearInterval(_genTimerInterval);
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = '\u23f3 \u751f\u6210\u4e2d...';
+
+  // 计时器
+  let elapsed = 0;
+  renderGeneratingUI(0);
+  _genTimerInterval = setInterval(() => {
+    elapsed++;
+    renderGeneratingUI(elapsed);
+  }, 1000);
+
+  try {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        prompt,
+        model: state.selectedModel,
+        size: state.selectedSize
+      }),
+      credentials: 'include',
+      signal: _genAbortController.signal
+    });
+
+    if (_genTimerInterval) clearInterval(_genTimerInterval);
+    _genTimerInterval = null;
+
+    const data = await res.json();
+    if (!res.ok) {
+      toast('\u274c ' + (data.error || '\u751f\u6210\u5931\u8d25'), 'error');
+      document.getElementById('resultArea').innerHTML = '<div class="result-placeholder"><p style="color:#f87171">' + data.error + '</p></div>';
+      return;
+    }
+    const resultArea = document.getElementById('resultArea');
+    resultArea.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = data.image_url;
+    img.alt = prompt;
+    img.style.maxWidth = '100%';
+    img.style.display = 'block';
+    img.style.borderRadius = '8px 8px 0 0';
+    img.onerror = function() {
+      resultArea.innerHTML = '<div class="result-placeholder"><p style="color:#f87171">图片加载失败</p></div>';
+    };
+    resultArea.appendChild(img);
+    const footer = document.createElement('div');
+    footer.className = 'result-footer';
+    const dlBtn = document.createElement('button');
+    dlBtn.className = 'btn-download';
+    dlBtn.textContent = '⬇️ 下载图片';
+    dlBtn.onclick = function() { downloadImage(data.image_url); };
+    footer.appendChild(dlBtn);
+
+    // 分享按钮
+    const shareUrl = window.location.origin + '/api/image/' + data.gen_id;
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'btn-download';
+    copyBtn.textContent = '🔗 复制链接';
+    copyBtn.onclick = function() { copyShareLink(shareUrl); };
+    footer.appendChild(copyBtn);
+
+    const xBtn = document.createElement('button');
+    xBtn.className = 'btn-download';
+    xBtn.textContent = '𝕍 分享';
+    xBtn.onclick = function() {
+      var txt = encodeURIComponent('🎨 我用 AiCanvas 生成的图片，看看效果！');
+      window.open('https://twitter.com/intent/tweet?text=' + txt + '&url=' + encodeURIComponent(shareUrl), '_blank', 'width=600,height=500');
+    };
+    footer.appendChild(xBtn);
+
+    resultArea.appendChild(footer);
+    state.user.credits = data.credits_left;
+    updateUI();
+    loadHistory();
+    toast('\u2705 \u751f\u6210\u6210\u529f\uff01', 'success');
+  } catch(e) {
+    if (e.name === 'AbortError') return;
+    if (_genTimerInterval) clearInterval(_genTimerInterval);
+    _genTimerInterval = null;
+    toast('\u274c \u7f51\u7edc\u9519\u8bef', 'error');
+    document.getElementById('resultArea').innerHTML = '<div class="result-placeholder"><p style="color:#f87171">\u7f51\u7edc\u9519\u8bef\uff0c\u8bf7\u91cd\u8bd5</p></div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '\u2728 \u751f\u6210';
+  }
+}
+
+// ── History ──
+async function loadHistory() {
+  if (!state.user) return;
+  const res = await fetch('/api/history', { credentials: 'include' });
+  if (!res.ok) return;
+  const data = await res.json();
+  const grid = document.getElementById('historyGrid');
+  if (!data.generations || data.generations.length === 0) {
+    grid.innerHTML = '<p style="color:#6b7280;font-size:13px;padding:8px">\u8fd8\u6ca1\u6709生成记录</p>';
+    return;
+  }
+  grid.innerHTML = data.generations.map(g =>
+    '<div class="history-item">' +
+      '<img src="' + g.image_url + '" alt="' + (g.prompt || '').replace(/"/g, '&quot;') + '" loading="lazy">' +
+      '<div class="prompt-text">' + (g.prompt || '') + '</div>' +
+      '<button class="btn-download" onclick="downloadImage(\'' + g.image_url + '\')">\u2b07\ufe0f \u4e0b\u8f7d</button>' +
+    '</div>'
+  ).join('');
+}
+
+// ── 套餐模态框 ──
+// ── 支付方式切换 ──
+let currentPayMethod = 'ls';
+
+function switchPayMethod(method) {
+  currentPayMethod = method;
+  document.getElementById('payTabLS').className = method === 'ls' ? 'pay-tab active' : 'pay-tab';
+  document.getElementById('payTabUSDT').className = method === 'usdt' ? 'pay-tab active' : 'pay-tab';
+  document.getElementById('lsPayPanel').style.display = method === 'ls' ? 'block' : 'none';
+  document.getElementById('usdtPayPanel').style.display = method === 'usdt' ? 'block' : 'none';
+}
+
+function copyAddr() {
+  const addr = document.getElementById('walletAddr').textContent.trim();
+  navigator.clipboard.writeText(addr).then(function() {
+    toast('✅ 地址已复制', 'success');
+  }).catch(function() {
+    const ta = document.createElement('textarea');
+    ta.value = addr;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('✅ 地址已复制', 'success');
+  });
+}
+
+// ── USDT 验证到账 ──
+var checkUsdtLoading = false;
+async function checkUsdtPayment() {
+  if (checkUsdtLoading) return;
+  if (!state.user) { toast('⚠️ 请先登录', 'error'); return; }
+  
+  checkUsdtLoading = true;
+  var btn = document.getElementById('usdtCheckBtn');
+  var status = document.getElementById('usdtCheckStatus');
+  btn.disabled = true;
+  btn.textContent = '⏳ 正在验证链上到账...';
+  status.style.display = 'block';
+  status.textContent = '正在查询 TronScan...';
+  status.style.color = '#f59e0b';
+
+  var txid = document.getElementById('usdtTxidInput').value.trim();
+  if (!txid) {
+    toast('⚠️ 请先粘贴交易哈希 (TxID)', 'error');
+    checkUsdtLoading = false;
+    btn.disabled = false;
+    btn.textContent = '🔍 验证到账';
+    return;
+  }
+
+  try {
+    var res = await fetch('/api/usdt/check', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      credentials: 'include',
+      body: JSON.stringify({txid: txid})
+    });
+    var data = await res.json();
+
+    if (data.found) {
+      status.textContent = '✅ 已检测到到账！+' + data.credits_added + ' 张';
+      status.style.color = '#22c55e';
+      btn.textContent = '✅ 验证成功';
+      btn.style.background = '#22c55e';
+      // 更新额度
+      if (data.credits_left !== undefined) {
+        state.user.credits = data.credits_left;
+        updateUI();
+      }
+      toast('🎉 充值成功！+' + data.credits_added + ' 张', 'success');
+      // 3秒后关闭弹窗
+      setTimeout(function() { closePlansModal(); }, 3000);
+    } else {
+      status.textContent = data.message || '暂未检测到转账，请确认已转账后重试';
+      status.style.color = '#f59e0b';
+      btn.disabled = false;
+      btn.textContent = '✅ 已完成转账，重新验证';
+    }
+  } catch(e) {
+    status.textContent = '❌ 验证失败，请稍后重试';
+    status.style.color = '#ef4444';
+    btn.disabled = false;
+    btn.textContent = '✅ 已完成转账，重新验证';
+    toast('❌ 网络错误', 'error');
+  } finally {
+    checkUsdtLoading = false;
+  }
+}
+
+// ── 套餐模态框 ──
+async function showPlansModal() {
+  if (!state.user) { toast('⚠️ 请先登录', 'error'); return; }
+  const display = document.getElementById('planPriceDisplay');
+  const res = await fetch('/api/plans');
+  const data = await res.json();
+  const plans = data.plans || {};
+  const firstPlan = Object.values(plans)[0];
+  if (firstPlan) {
+    display.innerHTML =
+      '<div class="plan-price-box">' +
+        '<div class="price">$' + firstPlan.usdt + ' <small>USDT</small></div>' +
+        '<div class="desc">' + firstPlan.desc + '</div>' +
+      '</div>';
+    var lsPrice = document.getElementById('lsPriceLabel');
+    if (lsPrice) lsPrice.textContent = '$' + firstPlan.usdt;
+  }
+  document.getElementById('plansModal').classList.add('show');
+}
+
+function closePlansModal() {
+  document.getElementById('plansModal').classList.remove('show');
+}
+
+function showTopup() {
+  showPlansModal();
+}
+
+// ── 充值记录 ──
+let _ordersLoaded = false;
+
+async function showOrders() {
+  const modalId = 'ordersModal';
+  let modal = document.getElementById(modalId);
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.id = modalId;
+    modal.innerHTML =
+      '<div class="modal" style="max-width:560px" onclick="event.stopPropagation()">' +
+        '<h2>\ud83d\udcb0 \u5145\u503c\u8bb0\u5f55</h2>' +
+        '<div id="ordersList" style="margin-bottom:16px">' +
+          '<p style="color:#6b7280;text-align:center;padding:20px">\u52a0\u8f7d\u4e2d...</p>' +
+        '</div>' +
+        '<div style="text-align:center">' +
+          '<button class="btn btn-outline" onclick="closeOrders()">\u5173\u95ed</button>' +
+        '</div>' +
+      '</div>';
+    modal.addEventListener('click', function() { closeOrders(); });
+    document.body.appendChild(modal);
+  }
+  modal.classList.add('show');
+  
+  if (!_ordersLoaded) {
+    try {
+      const res = await fetch('/api/orders', { credentials: 'include' });
+      const data = await res.json();
+      const list = document.getElementById('ordersList');
+      if (!data.orders || data.orders.length === 0) {
+        list.innerHTML = '<div style="text-align:center;padding:30px 0"><p style="color:#6b7280;margin-bottom:8px">\u8fd8\u6ca1\u6709\u5145\u503c\u8bb0\u5f55</p><p style="font-size:13px;color:#4b5563">\u70b9\u51fb\u53f3\u4e0a\u89d2\u201c\u5145\u503c\u201d\u6309\u94ae\u53ef\u4ee5\u8d2d\u4e70\u5957\u9910</p></div>';
+      } else {
+        _ordersLoaded = true;
+        list.innerHTML = data.orders.map(function(o) {
+          const statusMap = { "pending": "\u5f85\u786e\u8ba4", "confirmed": "\u5df2\u5230\u8d26", "canceled": "\u5df2\u53d6\u6d88" };
+          const status = statusMap[o.status] || o.status;
+          const statusColor = o.status === 'confirmed' ? '#22c55e' : o.status === 'pending' ? '#f59e0b' : '#6b7280';
+          const time = o.created_at ? o.created_at.slice(0, 19).replace('T', ' ') : '';
+          return '<div style="background:#13151d;border:1px solid #2a2d3a;border-radius:10px;padding:14px;margin-bottom:10px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+              '<span style="font-weight:600;color:#e4e6ed">' + (o.plan_name || '\u5957\u9910') + '</span>' +
+              '<span style="color:' + statusColor + ';font-size:13px;font-weight:600">' + status + '</span>' +
+            '</div>' +
+            '<div style="display:flex;justify-content:space-between;font-size:13px;color:#9ca3af">' +
+              '<span>$' + (o.usdt_amount || '0') + ' USDT</span>' +
+              '<span>' + (o.credits || 0) + ' \u5f20</span>' +
+              '<span>' + time + '</span>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+      }
+    } catch(e) {
+      document.getElementById('ordersList').innerHTML = '<p style="color:#f87171;text-align:center">\u52a0\u8f7d\u5931\u8d25</p>';
+    }
+  }
+}
+
+function closeOrders() {
+  closeModal('ordersModal');
+}
+
+// ── 分享 ──
+function copyShareLink(url) {
+  navigator.clipboard.writeText(url).then(function() {
+    toast('\u2705 \u94fe\u63a5\u5df2\u590d\u5236', 'success');
+  }).catch(function() {
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('\u2705 \u94fe\u63a5\u5df2\u590d\u5236', 'success');
+  });
+}
+
+// ── 页面分享面板 ──
+function toggleSharePopup() {
+  var popup = document.getElementById('sharePopup');
+  if (popup) popup.classList.toggle('show');
+  // 填充当前页面链接
+  var input = document.getElementById('shareLinkInput');
+  if (input) input.value = window.location.href;
+}
+
+function shareTo(platform) {
+  var url = encodeURIComponent(window.location.href);
+  var text = encodeURIComponent('\ud83c\udfa8 AiCanvas - \u6700\u4fbf\u5b9c\u7684\u56fe\u7247\u751f\u6210\u7f51\u7ad9\uff0c\u6bd4DALL\u00b7E 3 \u4fbf\u5b9c 50%+');
+  var shareUrls = {
+    x: 'https://twitter.com/intent/tweet?text=' + text + '&url=' + url,
+    facebook: 'https://www.facebook.com/sharer/sharer.php?u=' + url + '&quote=' + text,
+    telegram: 'https://t.me/share/url?url=' + url + '&text=' + text,
+    whatsapp: 'https://wa.me/?text=' + text + '%20' + url,
+    reddit: 'https://reddit.com/submit?url=' + url + '&title=' + text,
+  };
+  var link = shareUrls[platform];
+  if (link) window.open(link, '_blank', 'width=600,height=500');
+  // 关闭弹窗
+  var popup = document.getElementById('sharePopup');
+  if (popup) popup.classList.remove('show');
+}
+
+function copyPageLink() {
+  var input = document.getElementById('shareLinkInput');
+  if (input) {
+    input.select();
+    navigator.clipboard.writeText(input.value).then(function() {
+      toast('\u2705 \u94fe\u63a5\u5df2\u590d\u5236', 'success');
+    });
+  }
+}
+
+// \u70b9\u51fb\u5176\u4ed6\u5730\u65b9\u5173\u95ed\u5206\u4eab\u9762\u677f
+document.addEventListener('click', function(e) {
+  var popup = document.getElementById('sharePopup');
+  if (popup && !e.target.closest('.hero-share')) {
+    popup.classList.remove('show');
+  }
+});
+
+function toast(msg, type) {
+  if (!type) type = 'info';
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + type;
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+</script>
+  <!-- 价格对比悬浮窗 -->
+  <div class="price-badge">
+    <div class="pb-icon">💰</div>
+    <div class="pb-content">
+      <div class="pb-title">比竞品便宜 50%</div>
+      <div class="pb-grid">
+        <div class="pb-item"><span class="pb-name">DALL·E 3</span><span class="pb-price old">$0.040</span></div>
+        <div class="pb-item"><span class="pb-name">Flux Pro</span><span class="pb-price old">$0.050</span></div>
+        <div class="pb-item"><span class="pb-name">Midjourney</span><span class="pb-price old">~$0.050</span></div>
+        <div class="pb-divider"></div>
+        <div class="pb-item ours"><span class="pb-name ours">🔥 AiCanvas</span><span class="pb-price new">$0.020</span></div>
+      </div>
+      <div class="pb-save">每张节省 50%+</div>
+    </div>
+  </div>
+  <!-- 价格对比悬浮窗 -->
+  <div class="price-badge">
+    <div class="pb-icon">💰</div>
+    <div class="pb-content">
+      <div class="pb-title">比竞品便宜 50%</div>
+      <div class="pb-grid">
+        <div class="pb-item"><span class="pb-name">DALL·E 3</span><span class="pb-price old">$0.040</span></div>
+        <div class="pb-item"><span class="pb-name">Flux Pro</span><span class="pb-price old">$0.050</span></div>
+        <div class="pb-item"><span class="pb-name">Midjourney</span><span class="pb-price old">~$0.050</span></div>
+        <div class="pb-divider"></div>
+        <div class="pb-item ours"><span class="pb-name ours">🔥 AiCanvas</span><span class="pb-price new">$0.020</span></div>
+      </div>
+      <div class="pb-save">每张节省 50%+</div>
+    </div>
+  </div>
+</body>
+</html>

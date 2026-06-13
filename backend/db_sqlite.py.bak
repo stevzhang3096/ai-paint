@@ -1,0 +1,141 @@
+"""数据库 — 用户 + 额度 + 生成记录"""
+import sqlite3
+import hashlib
+import os
+from config import DB_PATH
+
+def get_conn():
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA journal_mode=WAL")
+    return conn
+
+def init_db():
+    conn = get_conn()
+    conn.executescript("""
+        CREATE TABLE IF NOT EXISTS users (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            email       TEXT UNIQUE NOT NULL,
+            password    TEXT NOT NULL,
+            credits     INTEGER DEFAULT 0,
+            created_at  TEXT DEFAULT (datetime('now'))
+        );
+
+        CREATE TABLE IF NOT EXISTS generations (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id     INTEGER NOT NULL REFERENCES users(id),
+            prompt      TEXT NOT NULL,
+            model       TEXT NOT NULL,
+            size        TEXT NOT NULL,
+            image_url   TEXT,
+            created_at  TEXT DEFAULT (datetime('now'))
+        );
+
+        CREATE TABLE IF NOT EXISTS orders (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id     INTEGER NOT NULL REFERENCES users(id),
+            txid        TEXT UNIQUE NOT NULL,
+            usdt_amount REAL NOT NULL,
+            plan_name   TEXT NOT NULL,
+            credits     INTEGER NOT NULL,
+            status      TEXT DEFAULT 'pending',
+            created_at  TEXT DEFAULT (datetime('now'))
+        );
+    """)
+    conn.commit()
+    conn.close()
+
+# ── 用户 ──
+
+def create_user(email, password):
+    conn = get_conn()
+    try:
+        pw_hash = hashlib.sha256(password.encode()).hexdigest()
+        conn.execute("INSERT INTO users (email, password, credits) VALUES (?, ?, ?)",
+                     (email, pw_hash, 0))
+        conn.commit()
+        user = conn.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
+        return dict(user) if user else None
+    except sqlite3.IntegrityError:
+        return None
+    finally:
+        conn.close()
+
+def get_user_by_email(email):
+    conn = get_conn()
+    user = conn.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
+    conn.close()
+    return dict(user) if user else None
+
+def verify_login(email, password):
+    user = get_user_by_email(email)
+    if not user:
+        return None
+    pw_hash = hashlib.sha256(password.encode()).hexdigest()
+    return user if user["password"] == pw_hash else None
+
+def get_user(user_id):
+    conn = get_conn()
+    user = conn.execute("SELECT id, email, credits FROM users WHERE id=?", (user_id,)).fetchone()
+    conn.close()
+    return dict(user) if user else None
+
+def add_credits(user_id, amount):
+    conn = get_conn()
+    conn.execute("UPDATE users SET credits = credits + ? WHERE id=?", (amount, user_id))
+    conn.commit()
+    conn.close()
+
+def deduct_credit(user_id):
+    conn = get_conn()
+    conn.execute("UPDATE users SET credits = credits - 1 WHERE id=? AND credits > 0", (user_id,))
+    conn.commit()
+    conn.close()
+
+def get_user_credits(user_id):
+    conn = get_conn()
+    row = conn.execute("SELECT credits FROM users WHERE id=?", (user_id,)).fetchone()
+    conn.close()
+    return row["credits"] if row else 0
+
+# ── 生成记录 ──
+
+def save_generation(user_id, prompt, model, size, image_url):
+    conn = get_conn()
+    conn.execute(
+        "INSERT INTO generations (user_id, prompt, model, size, image_url) VALUES (?, ?, ?, ?, ?)",
+        (user_id, prompt, model, size, image_url)
+    )
+    conn.commit()
+    conn.close()
+
+def get_user_generations(user_id, limit=20):
+    conn = get_conn()
+    rows = conn.execute(
+        "SELECT * FROM generations WHERE user_id=? ORDER BY created_at DESC LIMIT ?",
+        (user_id, limit)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+# ── 订单 ──
+
+def create_order(user_id, txid, usdt_amount, plan_name, credits):
+    conn = get_conn()
+    conn.execute(
+        "INSERT INTO orders (user_id, txid, usdt_amount, plan_name, credits) VALUES (?, ?, ?, ?, ?)",
+        (user_id, txid, usdt_amount, plan_name, credits)
+    )
+    conn.commit()
+    conn.close()
+
+def confirm_order(txid):
+    conn = get_conn()
+    order = conn.execute("SELECT * FROM orders WHERE txid=?", (txid,)).fetchone()
+    if order and order["status"] == "pending":
+        conn.execute("UPDATE orders SET status='confirmed' WHERE txid=?", (txid,))
+        conn.execute("UPDATE users SET credits = credits + ? WHERE id=?", (order["credits"], order["user_id"]))
+        conn.commit()
+    conn.close()
+    return dict(order) if order else None
