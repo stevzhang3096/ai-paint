@@ -664,9 +664,12 @@ var _i18n = {en:{
   deleted: '✅ Deleted',
   delete_failed: '❌ Delete failed',
   orders_loading: 'Loading...',
-  orders_empty: '还没有充值记录',
-  orders_hint: '点击右上角“充值”按钮可以购买套餐',
-  load_failed: 'Load failed',
+  orders_empty: 'No top up history yet',
+  orders_hint: 'Click "Top Up" in top right to purchase',
+  
+  pending_label: 'Pending',
+  confirmed_label: 'Confirmed',
+  canceled_label: 'Canceled',load_failed: 'Load failed',
   generating_failed: '❌ Generation failed',
   payment_success: '🎉 Top up successful! +',
   pwd_changed: '✅ Password changed',
@@ -697,7 +700,7 @@ var _i18n = {en:{
   generating_overdue: '⏰ 超过预期时间，请耐心等待',
   generating_timeout: '⏰ 似乎超时了，请点击取消重试',
   cancel_gen: '✕ 取消生成',
-  cancelled: '✕ 已取消，请重新生成',
+  cancelled: '✕ ' + t('canceled_label') + '，请重新生成',
   download_btn: '⬇️ 下载图片',
   copy_link: '🔗 复制链接',
   share_btn: '𝕍 分享',
@@ -752,9 +755,12 @@ var _i18n = {en:{
   deleted: '✅ 已删除',
   delete_failed: '❌ 删除失败',
   orders_loading: '加载中...',
-  orders_empty: '还没有充值记录',
-  orders_hint: '点击右上角“充值”按钮可以购买套餐',
-  load_failed: '加载失败',
+  orders_empty: 'No top up history yet',
+  orders_hint: 'Click "Top Up" in top right to purchase',
+  
+  pending_label: '待确认',
+  confirmed_label: '已到账',
+  canceled_label: '已取消',load_failed: '加载失败',
   generating_failed: '❌ 生成失败',
   payment_success: '🎉 充值成功！+',
   pwd_changed: '✅ 密码修改成功',
@@ -1520,7 +1526,7 @@ async function showOrders() {
       const data = await res.json();
       const list = document.getElementById('ordersList');
       if (!data.orders || data.orders.length === 0) {
-        list.innerHTML = '<div style="text-align:center;padding:30px 0"><p style="color:#6b7280;margin-bottom:8px">\u8fd8\u6ca1\u6709\u5145\u503c\u8bb0\u5f55</p><p style="font-size:13px;color:#4b5563">\u70b9\u51fb\u53f3\u4e0a\u89d2\u201c\u5145\u503c\u201d\u6309\u94ae\u53ef\u4ee5\u8d2d\u4e70\u5957\u9910</p></div>';
+        list.innerHTML = '<div style="text-align:center;padding:30px 0"><p style="color:#6b7280;margin-bottom:8px">' + t('orders_empty') + '</p><p style="font-size:13px;color:#4b5563">' + t('orders_hint') + '</p></div>';
       } else {
         _ordersLoaded = true;
         list.innerHTML = data.orders.map(function(o) {
