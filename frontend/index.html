@@ -752,7 +752,7 @@ var _i18n = {en:{
   deleted: '✅ 已删除',
   delete_failed: '❌ 删除失败',
   orders_loading: '加载中...',
-  orders_empty: '还没有充值记录',
+  orders_empty: '' + t('orders_empty') + '',
   orders_hint: '点击右上角"充值"按钮可以购买套餐',
   load_failed: '加载失败',
   generating_failed: '❌ 生成失败',
@@ -1104,12 +1104,12 @@ function showChangePwd() {
     modal.id = 'changePwdModal';
     modal.innerHTML =
       '<div class="modal" onclick="event.stopPropagation()">' +
-        '<h2>🔒 修改密码</h2>' +
+        '<h2>' + t('change_pwd_title') + '</h2>' +
         '<div class="error" id="changePwdError"></div>' +
-        '<div class="pwd-wrap"><input type="password" id="oldPwdInput" placeholder="\u5f53\u524d\u5bc6\u7801"><button class="pwd-toggle" onclick="togglePwd(\'oldPwdInput\', this)">\ud83d\udc41</button></div>' +
-        '<div class="pwd-wrap"><input type="password" id="newPwdInput" placeholder="\u65b0\u5bc6\u7801\uff08\u81f3\u5c114\u4f4d\uff09"><button class="pwd-toggle" onclick="togglePwd(\'newPwdInput\', this)">\ud83d\udc41</button></div>' +
-        '<button class="btn btn-primary" style="width:100%;padding:12px" onclick="doChangePwd()">修改密码</button>' +
-        '<div class="switch-link"><a onclick="closeModal(\'changePwdModal\')" style="color:#6b7280;cursor:pointer">\u53d6\u6d88</a></div>' +
+        '<div class="pwd-wrap"><input type="password" id="oldPwdInput" placeholder="Current Password"><button class="pwd-toggle" onclick="togglePwd(\'oldPwdInput\', this)">\ud83d\udc41</button></div>' +
+        '<div class="pwd-wrap"><input type="password" id="newPwdInput" placeholder="New Password (at least 4 chars)"><button class="pwd-toggle" onclick="togglePwd(\'newPwdInput\', this)">\ud83d\udc41</button></div>' +
+        '<button class="btn btn-primary" style="width:100%;padding:12px" onclick="doChangePwd()">' + t('change_pwd') + '</button>' +
+        '<div class="switch-link"><a onclick="closeModal(\'changePwdModal\')" style="color:#6b7280;cursor:pointer">' + t('pwd_modal_cancel') + '</a></div>' +
       '</div>';
     modal.addEventListener('click', function() { closeModal('changePwdModal'); });
     document.body.appendChild(modal);
