@@ -497,45 +497,45 @@
 <!-- 充值套餐 Modal -->
 <div class="modal-overlay" id="plansModal">
   <div class="modal" style="max-width:520px">
-    <h2>💎 选择充值方式</h2>
-    <p style="color:#9ca3af;font-size:13px;margin-bottom:16px">选择支付方式完成充值，自动到账</p>
+    <h2>💎 <span class="i18n-choose-payment">Choose Payment Method</span></h2>
+    <p style="color:#9ca3af;font-size:13px;margin-bottom:16px" class="i18n-payment-desc">Select payment method to top up, instant credit</p>
 
     <!-- 价格展示区：只显示一个固定价位 -->
     <div id="planPriceDisplay" style="text-align:center;margin-bottom:20px;background:#13151d;border-radius:12px;padding:20px;border:1px solid #2a2d3a"></div>
 
     <!-- 两种支付方式选项卡 -->
     <div class="pay-tabs" style="display:flex;gap:8px;margin-bottom:16px">
-      <button class="pay-tab active" id="payTabLS" onclick="switchPayMethod('ls')">💳 信用卡</button>
+      <button class="pay-tab active" id="payTabLS" onclick="switchPayMethod('ls')">💳 <span class="i18n-credit-card">Credit Card</span></button>
       <button class="pay-tab" id="payTabUSDT" onclick="switchPayMethod('usdt')">₿ USDT TRC-20</button>
     </div>
 
     <!-- LemonSqueezy 支付面板 -->
     <div id="lsPayPanel">
-      <p style="color:#9ca3af;font-size:13px;text-align:center;margin-bottom:16px">使用信用卡/借记卡支付，即时到账</p>
+      <p style="color:#9ca3af;font-size:13px;text-align:center;margin-bottom:16px" class="i18n-ls-desc">Pay with credit/debit card, instant credit</p>
       <a id="lsCheckoutBtn" href="https://stevstore.lemonsqueezy.com/checkout/buy/9f29f9f3-9700-4e03-ad65-192450143768" target="_blank" style="text-decoration:none">
-        <button class="btn btn-primary" style="width:100%;padding:14px;font-size:16px">💳 信用卡支付 <span id="lsPriceLabel">$5</span></button>
+        <button class="btn btn-primary" style="width:100%;padding:14px;font-size:16px">💳 <span class="i18n-pay-now">Pay</span> <span id="lsPriceLabel">$5</span></button>
       </a>
-      <p style="font-size:12px;color:#6b7280;text-align:center;margin-top:8px">安全支付由 LemonSqueezy 提供</p>
+      <p style="font-size:12px;color:#6b7280;text-align:center;margin-top:8px" class="i18n-secure-payment">Secure payment by LemonSqueezy</p>
     </div>
 
     <!-- USDT 支付面板 -->
     <div id="usdtPayPanel" style="display:none">
-      <p style="color:#9ca3af;font-size:13px;text-align:center;margin-bottom:12px">转账 USDT 到下方 TRC-20 地址，自动到账</p>
+      <p style="color:#9ca3af;font-size:13px;text-align:center;margin-bottom:12px" class="i18n-usdt-desc">Transfer USDT to the TRC-20 address below, auto-credited</p>
       <div style="text-align:center">
-        <p style="font-size:12px;color:#6b7280;margin-bottom:4px">📍 TRC-20 收款地址</p>
+        <p style="font-size:12px;color:#6b7280;margin-bottom:4px">📍 <span class="i18n-usdt-address">TRC-20 Address</span></p>
         <code style="font-size:11px;color:#a78bfa;word-break:break-all;display:block;background:#13151d;padding:10px;border-radius:8px" id="walletAddr">TQ5dyshgSMrBxbuQMvSbfTqconC7Cze2q7</code>
-        <button class="btn btn-ghost" style="font-size:12px;margin-top:6px" onclick="copyAddr()">📋 复制地址</button>
+        <button class="btn btn-ghost" style="font-size:12px;margin-top:6px" onclick="copyAddr()">📋 <span class="i18n-copy-addr">Copy Address</span></button>
       </div>
       <div style="margin-top:16px">
-        <label style="font-size:12px;color:#9ca3af;display:block;margin-bottom:6px">🔗 交易哈希 (TxID)</label>
-        <input type="text" id="usdtTxidInput" placeholder="粘贴 TRC-20 转账的 TxID" style="width:100%;padding:12px;background:#13151d;border:1px solid #2a2d3a;border-radius:10px;color:#e4e6ed;font-size:14px;outline:none;box-sizing:border-box">
+        <label style="font-size:12px;color:#9ca3af;display:block;margin-bottom:6px">🔗 <span class="i18n-txid-label">Transaction Hash (TxID)</span></label>
+        <input type="text" id="usdtTxidInput" placeholder="Paste TRC-20 TxID" style="width:100%;padding:12px;background:#13151d;border:1px solid #2a2d3a;border-radius:10px;color:#e4e6ed;font-size:14px;outline:none;box-sizing:border-box">
       </div>
       <div id="usdtCheckStatus" style="text-align:center;margin:10px 0;font-size:13px;color:#9ca3af;display:none"></div>
-      <button class="btn btn-primary" id="usdtCheckBtn" onclick="checkUsdtPayment()" style="width:100%;padding:12px;margin-top:8px">🔍 验证到账</button>
+      <button class="btn btn-primary" id="usdtCheckBtn" onclick="checkUsdtPayment()" style="width:100%;padding:12px;margin-top:8px"><span class="i18n-verify-btn">🔍 Verify Payment</span></button>
     </div>
 
     <div style="text-align:center;margin-top:16px">
-      <button class="btn btn-outline" onclick="closePlansModal()">关闭</button>
+      <button class="btn btn-outline" onclick="closePlansModal()"><span class="i18n-close-btn">Close</span></button>
     </div>
   </div>
 </div>
@@ -545,17 +545,17 @@
   <div class="modal">
     <h2 id="modalTitle">登录</h2>
     <div class="error" id="loginError"></div>
-    <input type="email" id="emailInput" placeholder="邮箱">
+    <input type="email" id="emailInput" placeholder="Email">
     <div class="pwd-wrap">
-      <input type="password" id="passwordInput" placeholder="密码">
+      <input type="password" id="passwordInput" placeholder="Password">
       <button class="pwd-toggle" onclick="togglePwd('passwordInput', this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
     </div>
     <button class="btn btn-primary" style="width:100%;padding:12px" id="modalActionBtn" onclick="handleAuth()"><span class="i18n-login">Log In</span></button>
     <div class="switch-link">
-      <span id="switchText">还没有账号？<a id="switchAuth">去注册</a></span>
+      <span id="switchText" class="i18n-no-account">Don't have an account? <a id="switchAuth">Sign Up</a></span>
     </div>
     <div class="switch-link">
-      <a id="forgotPwdLink" style="color:#6b7280;font-size:12px">忘记密码？</a>
+      <a id="forgotPwdLink" style="color:#6b7280;font-size:12px" class="i18n-forgot-pwd">Forgot password?</a>
     </div>
   </div>
 </div>
@@ -563,22 +563,22 @@
 <!-- 找回密码 Modal -->
 <div class="modal-overlay" id="forgotModal">
   <div class="modal">
-    <h2>🔑 找回密码</h2>
+    <h2 class="i18n-forgot-title">🔑 Forgot Password</h2>
     <div class="error" id="forgotError"></div>
     <div id="forgotStep1">
-      <input type="email" id="forgotEmail" placeholder="注册时使用的邮箱">
-      <button class="btn btn-primary" style="width:100%;padding:12px" onclick="sendVerifyCode()">发送验证码</button>
+      <input type="email" id="forgotEmail" placeholder="Enter your registered email">
+      <button class="btn btn-primary" style="width:100%;padding:12px" onclick="sendVerifyCode()"><span class="i18n-send-code">Send Code</span></button>
     </div>
     <div id="forgotStep2" style="display:none">
-      <input type="text" id="forgotCode" placeholder="输入6位验证码" maxlength="6" style="letter-spacing:4px;text-align:center;font-size:18px">
+      <input type="text" id="forgotCode" placeholder="Enter 6-digit code" maxlength="6" style="letter-spacing:4px;text-align:center;font-size:18px">
       <div class="pwd-wrap">
-        <input type="password" id="forgotNewPwd" placeholder="新密码（至少4位）">
+        <input type="password" id="forgotNewPwd" placeholder="New Password (at least 4 chars)">
         <button class="pwd-toggle" onclick="togglePwd('forgotNewPwd', this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
-      <button class="btn btn-primary" style="width:100%;padding:12px" onclick="resetPassword()">重置密码</button>
+      <button class="btn btn-primary" style="width:100%;padding:12px" onclick="resetPassword()"><span class="i18n-reset-pwd">Reset Password</span></button>
     </div>
     <div class="switch-link">
-      <a id="backToLogin" style="color:#8b5cf6;cursor:pointer">← 返回登录</a>
+      <a id="backToLogin" style="color:#8b5cf6;cursor:pointer" class="i18n-back-login">← Back to Login</a>
     </div>
   </div>
 </div>
@@ -770,7 +770,8 @@ document.documentElement.lang = _lang;
 function t(k){var s=_i18n[_lang]||_i18n.en;return s[k]!==undefined?s[k]:(_i18n.en[k]!==undefined?_i18n.en[k]:k);}
 function switchLang(l){_lang=l;localStorage.setItem("lang",l);document.documentElement.lang=l;document.querySelectorAll(".lang-btn").forEach(function(b){b.classList.toggle("active",b.dataset.lang===l);});applyI18n();}
 function applyI18n(){
-var m={".i18n-hero":"hero",".i18n-hero-highlight":"hero_highlight",".i18n-hero-sub":"hero_sub",".i18n-share":"share",".i18n-share-title":"share_title",".i18n-generate-title":"generate_title",".i18n-select-model":"select_model",".i18n-select-size":"select_size",".i18n-placeholder-text":"placeholder_text",".i18n-history-title":"history_title",".i18n-pb-title":"hero_highlight",".i18n-pb-save":"pb_save",".i18n-login":"login",".i18n-register":"register",".i18n-logout":"logout",".i18n-topup":"topup",".i18n-change-pwd":"change_pwd",".i18n-history-menu":"history_menu",".i18n-orders-menu":"orders_menu",".i18n-signup-title":"signup_title",".i18n-signup-highlight":"signup_highlight",".i18n-signup-sub":"signup_sub",".i18n-signup-btn":"signup_btn",".i18n-generate-btn":"generate_btn",".i18n-credits-unit":"credits_left",};
+var m={".i18n-hero":"hero",".i18n-hero-highlight":"hero_highlight",".i18n-hero-sub":"hero_sub",".i18n-share":"share",".i18n-share-title":"share_title",".i18n-generate-title":"generate_title",".i18n-select-model":"select_model",".i18n-select-size":"select_size",".i18n-placeholder-text":"placeholder_text",".i18n-history-title":"history_title",".i18n-pb-title":"hero_highlight",".i18n-pb-save":"pb_save",".i18n-login":"login",".i18n-register":"register",".i18n-logout":"logout",".i18n-topup":"topup",".i18n-change-pwd":"change_pwd",".i18n-history-menu":"history_menu",".i18n-orders-menu":"orders_menu",".i18n-signup-title":"signup_title",".i18n-signup-highlight":"signup_highlight",".i18n-signup-sub":"signup_sub",".i18n-signup-btn":"signup_btn",".i18n-generate-btn":"generate_btn",".i18n-credits-unit":"credits_left",,".i18n-choose-payment":"choose_payment",".i18n-payment-desc":"payment_desc",".i18n-credit-card":"credit_card",".i18n-pay-now":"pay_now",".i18n-secure-payment":"secure_payment",".i18n-usdt-address":"usdt_address",".i18n-copy-addr":"copy_addr",".i18n-txid-label":"txid_placeholder",".i18n-verify-btn":"verify_btn",".i18n-close-btn":"close",".i18n-forgot-title":"forgot_title",".i18n-send-code":"send_code",".i18n-reset-pwd":"reset_pwd",".i18n-back-login":"back_to_login",".i18n-forgot-pwd":"forgot_pwd",".i18n-no-account":"no_account",".i18n-ls-desc":"payment_desc",".i18n-usdt-desc":"payment_desc"
+};
 for(var sel in m){document.querySelectorAll(sel).forEach(function(el){el.innerHTML=t(m[sel]);});}
 var pi=document.getElementById("promptInput");if(pi&&!pi.dataset.i18nSet)pi.placeholder=t("placeholder_text");
 var cb=document.getElementById("creditsCount");var cu=document.getElementById("creditsUnit");
