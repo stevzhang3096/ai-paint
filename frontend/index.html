@@ -366,7 +366,7 @@
     .pb-title { font-size: 12px; }
     .pb-item { font-size: 11px; }
   }
-  function switchLang(l){_lang=l;localStorage.setItem("lang",l);document.documentElement.lang=l;document.querySelectorAll(".lang-btn").forEach(function(b){b.classList.toggle("active",b.dataset.lang===l);});applyI18n();renderModelChips();renderSizeChips();}
+  function switchLang(l){_lang=l;localStorage.setItem("lang",l);document.documentElement.lang=l;document.querySelectorAll(".lang-btn").forEach(function(b){b.classList.toggle("active",b.dataset.lang===l);});applyI18n();}
 function applyI18n(){
 var m={".i18n-hero":"hero",".i18n-hero-highlight":"hero_highlight",".i18n-hero-sub":"hero_sub",".i18n-share":"share",".i18n-share-title":"share_title",".i18n-generate-title":"generate_title",".i18n-select-model":"select_model",".i18n-select-size":"select_size",".i18n-placeholder-text":"placeholder_text",".i18n-history-title":"history_title",".i18n-pb-title":"hero_highlight",".i18n-pb-save":"pb_save",".i18n-login":"login",".i18n-register":"register",".i18n-logout":"logout",".i18n-topup":"topup",".i18n-change-pwd":"change_pwd",".i18n-history-menu":"history_menu",".i18n-orders-menu":"orders_menu",".i18n-signup-title":"signup_title",".i18n-signup-highlight":"signup_highlight",".i18n-signup-sub":"signup_sub",".i18n-signup-btn":"signup_btn",".i18n-generate-btn":"generate_btn",".i18n-credits-unit":"credits_left",};
 for(var sel in m){document.querySelectorAll(sel).forEach(function(el){el.innerHTML=t(m[sel]);});}
