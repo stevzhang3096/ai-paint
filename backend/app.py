@@ -317,7 +317,11 @@ def admin_logout():
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), '..', 'frontend')
 @app.route('/')
 def index():
-    return send_from_directory(FRONTEND_DIR, 'index.html')
+    resp = send_from_directory(FRONTEND_DIR, 'index.html')
+    resp.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    resp.headers['Pragma'] = 'no-cache'
+    resp.headers['Expires'] = '0'
+    return resp
 @app.route('/<path:path>')
 def static_files(path):
     return send_from_directory(FRONTEND_DIR, path)
