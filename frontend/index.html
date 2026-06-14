@@ -244,6 +244,16 @@
     padding: 8px 10px 4px; font-size: 12px; color: #9ca3af;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
+  .history-del {
+    position: absolute; top: 6px; right: 6px; z-index: 5;
+    width: 24px; height: 24px; border-radius: 6px;
+    border: none; background: rgba(0,0,0,.5);
+    color: #ef4444; font-size: 12px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: all .15s;
+  }
+  .history-item:hover .history-del { opacity: 1; }
+  .history-del:hover { background: rgba(239,68,68,.3); }
   .history-item .btn-download {
     width: 100%; border-radius: 0; padding: 4px; font-size: 12px;
     border-top: 1px solid #2a2d3a;
@@ -988,9 +998,15 @@ function cancelGeneration() {
     _genTimerInterval = null;
   }
   const area = document.getElementById('resultArea');
-  area.innerHTML = '<div class="result-placeholder"><p style="color:#6b7280">\u2715 \u5df2\u53d6\u6d88\u751f\u6210</p></div>';
+  area.innerHTML = '<div class="result-placeholder"><p style="color:#6b7280">\u2715 \u5df2\u53d6\u6d88\uff0c\u8bf7\u91cd\u65b0\u751f\u6210</p></div>';
   document.getElementById('genBtn').disabled = false;
   document.getElementById('genBtn').textContent = '\u2728 \u751f\u6210';
+  // 将已输入的 prompt 放回原处
+  var promptInput = document.getElementById('promptInput');
+  if (promptInput && promptInput.value) {
+    promptInput.focus();
+    promptInput.setSelectionRange(promptInput.value.length, promptInput.value.length);
+  }
 }
 
 async function generate() {
@@ -1079,6 +1095,22 @@ async function generate() {
     };
     footer.appendChild(xBtn);
 
+    // 再试一次
+    const retryBtn = document.createElement('button');
+    retryBtn.className = 'btn-download';
+    retryBtn.style.color = '#a78bfa';
+    retryBtn.style.fontWeight = '700';
+    retryBtn.textContent = '🔄 再试一次';
+    retryBtn.onclick = function() {
+      var promptInput = document.getElementById('promptInput');
+      if (promptInput) {
+        promptInput.focus();
+        promptInput.setSelectionRange(promptInput.value.length, promptInput.value.length);
+      }
+      generate();
+    };
+    footer.appendChild(retryBtn);
+
     resultArea.appendChild(footer);
     state.user.credits = data.credits_left;
     updateUI();
@@ -1109,14 +1141,46 @@ async function loadHistory() {
   }
   grid.innerHTML = data.generations.map(g =>
     '<div class="history-item">' +
+      '<button class="history-del" onclick="deleteGeneration(' + g.id + ')" title="\u5220\u9664">\u2716<\/button>' +
       '<img src="' + g.image_url + '" alt="' + (g.prompt || '').replace(/"/g, '&quot;') + '" loading="lazy">' +
-      '<div class="prompt-text">' + (g.prompt || '') + '</div>' +
-      '<button class="btn-download" onclick="downloadImage(\'' + g.image_url + '\')">\u2b07\ufe0f \u4e0b\u8f7d</button>' +
-    '</div>'
+      '<div class="prompt-text">' + (g.prompt || '') + '<\/div>' +
+      '<button class="btn-download" onclick="downloadImage(\'' + g.image_url + '\')">\u2b07\ufe0f \u4e0b\u8f7d<\/button>' +
+    '<\/div>'
   ).join('');
 }
+// ── 删除生成记录 ──
+async function deleteGeneration(genId) {
+  if (!confirm('\u786e\u5b9a\u5220\u9664\u8fd9\u5f20\u56fe\u7247\u5417\uff1f')) return;
+  try {
+    var res = await fetch('/api/generation/' + genId, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+    var data = await res.json();
+    if (data.success) {
+      toast('\u2705 \u5df2\u5220\u9664', 'success');
+      loadHistory();
+    } else {
+      toast('\u274c ' + (data.error || '\u5220\u9664\u5931\u8d25'), 'error');
+    }
+  } catch(e) {
+    toast('\u274c \u7f51\u7edc\u9519\u8bef', 'error');
+  }
+}
+
+
 
 // ── 套餐模态框 ──
+// 确保页面加载完后再检查登录状态
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    if (!state.user) {
+      var sb = document.getElementById('signupBanner');
+      if (sb) sb.classList.add('show');
+    }
+  });
+}
+
 // ── 支付方式切换 ──
 let currentPayMethod = 'ls';
 

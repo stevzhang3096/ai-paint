@@ -174,6 +174,15 @@ def get_generation(gen_id):
     finally:
         conn.close()
 
+def delete_generation(gen_id):
+    conn = get_conn()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM generations WHERE id=%s", (gen_id,))
+        conn.commit()
+    finally:
+        conn.close()
+
 def get_user_generations(user_id, limit=20):
     conn = get_conn()
     try:

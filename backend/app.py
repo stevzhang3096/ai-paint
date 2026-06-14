@@ -458,6 +458,28 @@ def serve_image(gen_id):
     # 没有本地文件，直接302到原图
     return redirect(gen["image_url"])
 
+@app.route('/api/generation/<int:gen_id>', methods=['DELETE'])
+def delete_generation(gen_id):
+    """删除指定生成记录（仅本人可删）"""
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "请先登录"}), 401
+    gen = db.get_generation(gen_id)
+    if not gen:
+        return jsonify({"error": "记录不存在"}), 404
+    if gen["user_id"] != user_id:
+        return jsonify({"error": "无权删除"}), 403
+    # 删除本地图片
+    if gen.get("local_file"):
+        try:
+            img_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'images', gen["local_file"])
+            if os.path.exists(img_path):
+                os.remove(img_path)
+        except:
+            pass
+    db.delete_generation(gen_id)
+    return jsonify({"success": True})
+
 @app.route('/api/history', methods=['GET'])
 def get_history():
     user_id = session.get('user_id')
