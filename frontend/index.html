@@ -1014,7 +1014,7 @@ async function sendVerifyCode() {
     document.getElementById('forgotStep2').style.display = 'block';
     toast(data.message || t('verify_sent'), 'success');
   } catch(e) {
-    errorEl.textContent = '\u7f51\u7edc\u9519\u8bef';
+    errorEl.textContent = t('network_error');
     errorEl.style.display = 'block';
   }
 }
@@ -1051,7 +1051,7 @@ async function resetPassword() {
     toast(t('pwd_reset_success'), 'success');
     showLogin();
   } catch(e) {
-    errorEl.textContent = '\u7f51\u7edc\u9519\u8bef';
+    errorEl.textContent = t('network_error');
     errorEl.style.display = 'block';
   }
 }
@@ -1161,13 +1161,13 @@ async function doChangePwd() {
     });
     const data = await res.json();
     if (!res.ok) {
-      errorEl.textContent = data.error || '\u4fee\u6539\u5931\u8d25';
+      errorEl.textContent = data.error || 'Operation failed';
       errorEl.style.display = 'block'; return;
     }
     closeModal('changePwdModal');
     toast(t('pwd_changed'), 'success');
   } catch(e) {
-    errorEl.textContent = '\u7f51\u7edc\u9519\u8bef';
+    errorEl.textContent = t('network_error');
     errorEl.style.display = 'block';
   }
 }
@@ -1372,7 +1372,7 @@ async function deleteGeneration(genId) {
       toast(t('deleted'), 'success');
       loadHistory();
     } else {
-      toast('\u274c ' + (data.error || t('delete_failed')), 'error');
+      toast('\u274c ' + (data.error || 'Operation failed'), 'error');
     }
   } catch(e) {
     toast(t('network_error'), 'error');
