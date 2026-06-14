@@ -6,10 +6,10 @@ ZHIPU_API_KEY = "fc7e1baf04774595a5f038854646c61c.QGZw8VuctAKut8Gf"
 
 # MySQL 配置
 MYSQL_CONFIG = {
-    "host": "localhost",
+    "host": "172.17.0.3",
     "port": 3306,
     "user": "paint",
-    "password": "paint_pwd_2026",
+    "password": "paint123",
     "database": "ai_paint",
     "charset": "utf8mb4",
 }
