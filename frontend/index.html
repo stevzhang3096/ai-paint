@@ -681,15 +681,15 @@ var _i18n = {en:{
   share: '分享',
   share_title: '<span class="i18n-share-title">Share AiCanvas</span>',
   generate_title: '🎨 <span class="i18n-generate-title">Generate Image</span>',
-  select_model: '<span class="i18n-select-model">📐 Select Model</span>',
-  select_size: '<span class="i18n-select-size">📏 Select Size</span>',
+  select_model: '📐 选择模型',
+  select_size: '📏 选择尺寸',
   generate_btn: '✨ 生成',
   signup_title: '注册即送',
   signup_highlight: '10 张免费额度',
-  signup_sub: '<span class="i18n-signup-sub">Try AI image generation, no credit card needed</span>',
-  signup_btn: '<span class="i18n-signup-btn">Free Sign Up →</span>',
+  signup_sub: '免费体验 AI 图片生成，无需信用卡',
+  signup_btn: '免费注册 →',
   placeholder_text: '输入 prompt，点击生成',
-  history_title: '<span class="i18n-history-title">📚 History</span>',
+  history_title: '📚 生成历史',
   no_history: '还没有生成记录',
   generating: '🎨 AI 正在创作...',
   generating_overdue: '⏰ 超过预期时间，请耐心等待',
@@ -775,6 +775,7 @@ var cb=document.getElementById("creditsCount");var cu=document.getElementById("c
 if(cb){var c=state&&state.user?state.user.credits:0;cb.textContent=c;}if(cu)cu.innerHTML=t("credits_left");
 if(typeof renderModelChips==="function")renderModelChips();if(typeof renderSizeChips==="function")renderSizeChips();
 var rf=document.getElementById("resultArea");if(rf){rf.querySelectorAll(".btn-download").forEach(function(b){var txt=b.textContent;if(txt.indexOf("ownload")>-1||txt.indexOf("下载")>-1)b.textContent=t("download_btn");else if(txt.indexOf("Share")>-1||txt.indexOf("分享")>-1||txt.indexOf("Copy")>-1||txt.indexOf("复制")>-1)b.textContent=t("copy_link");else if(txt.indexOf("Try")>-1||txt.indexOf("再试")>-1)b.textContent=t("retry_btn");});}
+var hg=document.getElementById("historyGrid");if(hg){hg.querySelectorAll(".btn-download").forEach(function(b){b.textContent=t("download_btn");});}
 }
 // — end i18n —
 
