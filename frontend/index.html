@@ -1121,7 +1121,9 @@ function showChangePwd() {
       '<div class="modal" onclick="event.stopPropagation()">' +
         '<div class="modal-header"><h2>🔒 <span class="lang-en">Change Password</span><span class="lang-zh">修改密码</span></h2><button class="modal-close" onclick="closeModal(&#39;changePwdModal&#39;)">✕</button></div>' +
         '<div class="error" id="changePwdError"></div>' +
+        '<label style="font-size:13px;color:#9ca3af;display:block;margin-bottom:6px"><span class="lang-en">Current Password</span><span class="lang-zh">当前密码</span></label>' +
         '<div class="pwd-wrap"><input type="password" id="oldPwdInput" placeholder=""><button class="pwd-toggle" onclick="togglePwd(&#39;oldPwdInput&#39;, this)">👁</button></div>' +
+        '<label style="font-size:13px;color:#9ca3af;display:block;margin-bottom:6px;margin-top:6px"><span class="lang-en">New Password</span><span class="lang-zh">新密码</span></label>' +
         '<div class="pwd-wrap"><input type="password" id="newPwdInput" placeholder=""><button class="pwd-toggle" onclick="togglePwd(&#39;newPwdInput&#39;, this)">👁</button></div>' +
         '<button class="btn btn-primary" style="width:100%;padding:12px" onclick="doChangePwd()"><span class="lang-en">Change Password</span><span class="lang-zh">修改密码</span></button>' +
         '<div class="switch-link"><a onclick="closeModal(&apos;changePwdModal&apos;)" style="color:#6b7280;cursor:pointer"><span class="lang-en">Cancel</span><span class="lang-zh">取消</span></a></div>' +
