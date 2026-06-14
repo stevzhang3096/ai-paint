@@ -1164,8 +1164,8 @@ async function doChangePwd() {
       errorEl.textContent = data.error || 'Operation failed';
       errorEl.style.display = 'block'; return;
     }
-    closeModal('changePwdModal');
     toast(t('pwd_changed'), 'success');
+    setTimeout(function() { closeModal('changePwdModal'); }, 1200);
   } catch(e) {
     errorEl.textContent = t('network_error');
     errorEl.style.display = 'block';
