@@ -774,6 +774,7 @@ var pi=document.getElementById("promptInput");if(pi&&!pi.dataset.i18nSet)pi.plac
 var cb=document.getElementById("creditsCount");var cu=document.getElementById("creditsUnit");
 if(cb){var c=state&&state.user?state.user.credits:0;cb.textContent=c;}if(cu)cu.innerHTML=t("credits_left");
 if(typeof renderModelChips==="function")renderModelChips();if(typeof renderSizeChips==="function")renderSizeChips();
+var rf=document.getElementById("resultArea");if(rf){rf.querySelectorAll(".btn-download").forEach(function(b){var txt=b.textContent;if(txt.indexOf("ownload")>-1||txt.indexOf("下载")>-1)b.textContent=t("download_btn");else if(txt.indexOf("Share")>-1||txt.indexOf("分享")>-1||txt.indexOf("Copy")>-1||txt.indexOf("复制")>-1)b.textContent=t("copy_link");else if(txt.indexOf("Try")>-1||txt.indexOf("再试")>-1)b.textContent=t("retry_btn");});}
 }
 // — end i18n —
 
