@@ -18,8 +18,62 @@
     display: flex; justify-content: space-between; align-items: center;
     padding: 16px 24px; background: #1a1c25; border-bottom: 1px solid #2a2d3a;
   }
-  .logo { font-size: 20px; font-weight: 700; color: #8b5cf6; }
+  .logo { font-size: 20px; font-weight: 700; color: #8b5cf6; display: flex; align-items: center; gap: 10px; }
   .logo span { color: #e4e6ed; }
+  /* 顶部横幅标语 */
+  .hero-banner {
+    text-align: center; padding: 10px 16px;
+    background: linear-gradient(135deg, #1e102b 0%, #1a1c25 100%);
+    border-bottom: 1px solid #2a2d3a;
+  }
+  .hero-banner h1 {
+    font-size: 16px; font-weight: 700; color: #c4b5fd;
+    margin: 0; display: inline-flex; align-items: center; gap: 8px;
+  }
+  .hero-banner h1 .highlight {
+    color: #f59e0b;
+  }
+  .hero-banner .sub {
+    font-size: 12px; color: #6b7280; margin-left: 8px;
+  }
+  /* 横幅分享按钮 */
+  .hero-share {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-left: 24px; cursor: pointer; position: relative;
+    padding: 6px 12px; border-radius: 20px;
+    color: #9ca3af; font-size: 13px;
+    border: 1px solid #2a2d3a; transition: all .2s;
+  }
+  .hero-share:hover { color: #a78bfa; border-color: #8b5cf6; background: #1e102b; }
+  .share-popup {
+    display: none; position: absolute; top: 100%; right: 0; margin-top: 8px;
+    min-width: 300px; background: #1a1c25; border: 1px solid #2a2d3a;
+    border-radius: 14px; padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.4);
+    z-index: 200;
+  }
+  .share-popup.show { display: block; }
+  .sp-title { font-size: 14px; font-weight: 600; color: #c4c8d4; margin-bottom: 12px; }
+  .sp-btns { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 12px; }
+  .sp-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 8px 4px; border-radius: 10px;
+    color: #9ca3af; text-decoration: none; font-size: 10px; font-weight: 600;
+    transition: all .15s;
+  }
+  .sp-btn:hover { background: #2e1065; color: #a78bfa; }
+  .sp-btn svg { width: 20px; height: 20px; }
+  .sp-link-row {
+    display: flex; gap: 8px;
+  }
+  .sp-link-row input {
+    flex: 1; padding: 8px 10px; border-radius: 8px;
+    background: #13151d; border: 1px solid #2a2d3a;
+    color: #9ca3af; font-size: 12px; outline: none;
+  }
+  .sp-link-row input:focus { border-color: #8b5cf6; }
+  .sp-link-row .btn-download {
+    white-space: nowrap; padding: 8px 12px;
+  }
   .header-right { display: flex; gap: 12px; align-items: center; position: relative; }
   .user-menu-wrap { position: relative; display: none; }
   .user-menu-trigger {
@@ -95,6 +149,37 @@
   .btn-generate:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(124,58,237,.4); }
   .btn-generate:disabled { opacity: .5; cursor: not-allowed; }
 
+  /* 注册引导横幅 */
+  .signup-banner {
+    margin-top: 16px; border-radius: 12px;
+    background: linear-gradient(135deg, #1e102b 0%, #1a1c25 100%);
+    border: 1px solid #8b5cf6;
+    padding: 20px 24px;
+    display: none;
+  }
+  .signup-banner.show { display: block; }
+  .sb-content {
+    display: flex; align-items: center; gap: 16px;
+    flex-wrap: wrap;
+  }
+  .sb-emoji { font-size: 36px; flex-shrink: 0; }
+  .sb-text { flex: 1; min-width: 150px; }
+  .sb-title { font-size: 16px; font-weight: 700; color: #e4e6ed; }
+  .sb-highlight { color: #f59e0b; font-weight: 800; }
+  .sb-sub { font-size: 13px; color: #6b7280; margin-top: 2px; }
+  .sb-btn {
+    padding: 10px 24px; border-radius: 10px; border: none;
+    background: linear-gradient(135deg, #7c3aed, #c026d3);
+    color: #fff; font-size: 14px; font-weight: 700;
+    cursor: pointer; white-space: nowrap;
+    transition: all .2s;
+  }
+  .sb-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(124,58,237,.4); }
+  @media (max-width: 500px) {
+    .sb-content { flex-direction: column; text-align: center; }
+    .sb-btn { width: 100%; }
+  }
+
   .result-area {
     margin-top: 16px; min-height: 200px; border-radius: 12px;
     background: #13151d; border: 1px dashed #2a2d3a;
@@ -159,25 +244,45 @@
     padding: 8px 10px 4px; font-size: 12px; color: #9ca3af;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
+  .history-del {
+    position: absolute; top: 6px; right: 6px; z-index: 5;
+    width: 24px; height: 24px; border-radius: 6px;
+    border: none; background: rgba(0,0,0,.5);
+    color: #ef4444; font-size: 12px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: all .15s;
+  }
+  .history-item:hover .history-del { opacity: 1; }
+  .history-del:hover { background: rgba(239,68,68,.3); }
   .history-item .btn-download {
     width: 100%; border-radius: 0; padding: 4px; font-size: 12px;
     border-top: 1px solid #2a2d3a;
   }
 
-  .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .plan-card {
-    background: #13151d; border: 1px solid #2a2d3a; border-radius: 12px;
-    padding: 20px; text-align: center; cursor: pointer;
-    transition: all .2s;
+  .pay-tabs {
+    display: flex; gap: 8px; margin-bottom: 16px;
   }
-  .plan-card:hover, .plan-card.popular { border-color: #8b5cf6; }
-  .plan-card.selected { border-color: #8b5cf6; background: #2e1065; }
-  .plan-card .price { font-size: 28px; font-weight: 700; color: #8b5cf6; }
-  .plan-card .price small { font-size: 14px; color: #6b7280; }
-  .plan-card .desc { font-size: 13px; color: #9ca3af; margin: 8px 0; }
-  .plan-card .badge {
-    background: #2e1065; color: #a78bfa; padding: 2px 10px;
-    border-radius: 10px; font-size: 11px;
+  .pay-tab {
+    flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #2a2d3a;
+    background: transparent; color: #c4c8d4; cursor: pointer;
+    font-size: 14px; font-weight: 600; transition: all .2s;
+  }
+  .pay-tab.active {
+    background: #2e1065; border-color: #8b5cf6; color: #a78bfa;
+  }
+  .pay-tab:hover { border-color: #8b5cf6; }
+  .plan-price-box {
+    padding: 20px; border-radius: 12px;
+    background: #13151d; border: 1px solid #2a2d3a; text-align: center;
+  }
+  .plan-price-box .price {
+    font-size: 36px; font-weight: 700; color: #8b5cf6;
+  }
+  .plan-price-box .price small {
+    font-size: 16px; color: #6b7280;
+  }
+  .plan-price-box .desc {
+    font-size: 14px; color: #9ca3af; margin-top: 8px;
   }
 
   .toast {
@@ -227,6 +332,82 @@
     .plans-grid { grid-template-columns: 1fr; }
     header { flex-wrap: wrap; gap: 8px; }
   }
+  /* 价格对比悬浮窗 */
+  .price-badge {
+    position: fixed; bottom: 24px; right: 24px;
+    background: linear-gradient(135deg, #1a1c25 0%, #1e102b 100%);
+    border: 1px solid #8b5cf6;
+    border-radius: 16px;
+    padding: 16px 18px;
+    z-index: 999;
+    box-shadow: 0 8px 32px rgba(139,92,246,.25);
+    animation: pbFadeIn .5s ease-out;
+    min-width: 210px;
+    transition: all .3s;
+  }
+  .price-badge:hover {
+    box-shadow: 0 12px 40px rgba(139,92,246,.35);
+    transform: translateY(-2px);
+  }
+  @keyframes pbFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .pb-icon { font-size: 20px; margin-bottom: 8px; }
+  .pb-title { font-size: 13px; font-weight: 700; color: #a78bfa; margin-bottom: 10px; }
+  .pb-grid { display: flex; flex-direction: column; gap: 2px; }
+  .pb-item { display: flex; justify-content: space-between; align-items: center; padding: 2px 0; font-size: 12px; }
+  .pb-name { color: #9ca3af; }
+  .pb-name.ours { color: #e4e6ed; font-weight: 600; }
+  .pb-price { font-weight: 600; }
+  .pb-price.old { color: #6b7280; text-decoration: line-through; text-decoration-color: #ef4444; font-weight: 400; }
+  .pb-price.new { color: #c4b5fd; font-weight: 700; }
+  .pb-divider { height: 1px; background: #2a2d3a; margin: 6px 0; }
+  .pb-save { text-align: center; font-size: 11px; color: #8b5cf6; font-weight: 700; margin-top: 6px; }
+  @media (max-width: 600px) {
+    .price-badge { bottom: 16px; right: 12px; padding: 12px 14px; min-width: 170px; }
+    .pb-title { font-size: 12px; }
+    .pb-item { font-size: 11px; }
+  }
+  /* 价格对比悬浮窗 */
+  .price-badge {
+    position: fixed; bottom: 24px; right: 24px;
+    background: linear-gradient(135deg, #1a1c25 0%, #1e102b 100%);
+    border: 1px solid #8b5cf6;
+    border-radius: 16px;
+    padding: 16px 18px;
+    z-index: 999;
+    box-shadow: 0 8px 32px rgba(139,92,246,.25);
+    animation: pbFadeIn .5s ease-out;
+    min-width: 210px;
+    transition: all .3s;
+  }
+  .price-badge:hover {
+    box-shadow: 0 12px 40px rgba(139,92,246,.35);
+    transform: translateY(-2px);
+  }
+  @keyframes pbFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .pb-icon { font-size: 20px; margin-bottom: 8px; }
+  .pb-title { font-size: 13px; font-weight: 700; color: #a78bfa; margin-bottom: 10px; }
+  .pb-grid { display: flex; flex-direction: column; gap: 2px; }
+  .pb-item { display: flex; justify-content: space-between; align-items: center; padding: 2px 0; font-size: 12px; }
+  .pb-name { color: #9ca3af; }
+  .pb-name.ours { color: #e4e6ed; font-weight: 600; }
+  .pb-price { font-weight: 600; }
+  .pb-price.old { color: #6b7280; text-decoration: line-through; text-decoration-color: #ef4444; font-weight: 400; }
+  .pb-price.new { color: #c4b5fd; font-weight: 700; }
+  .pb-divider { height: 1px; background: #2a2d3a; margin: 6px 0; }
+  .pb-save { text-align: center; font-size: 11px; color: #8b5cf6; font-weight: 700; margin-top: 6px; }
+  @media (max-width: 600px) {
+    .price-badge { bottom: 16px; right: 12px; padding: 12px 14px; min-width: 170px; }
+    .pb-title { font-size: 12px; }
+    .pb-item { font-size: 11px; }
+  }
+
+.lang-switch { display: flex; gap: 0; align-items: center; margin-right: 8px; }
+.lang-btn { padding: 4px 10px; border: 1px solid #3b3f4f; background: transparent; color: #6b7280; cursor: pointer; font-size: 12px; font-weight: 600; transition: all .15s; line-height: 1.4; }
+.lang-btn:first-child { border-radius: 6px 0 0 6px; }
+.lang-btn:last-child { border-radius: 0 6px 6px 0; }
+.lang-btn.active { background: #2e1065; border-color: #8b5cf6; color: #a78bfa; }
+.lang-btn:hover:not(.active) { border-color: #6b7280; color: #9ca3af; }
+
 </style>
 </head>
 <body>
@@ -234,6 +415,11 @@
 <header>
   <div class="logo">Ai<span>Canvas</span></div>
   <div class="header-right">
+    <div class="lang-switch">
+      <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">EN</button>
+      <button class="lang-btn" data-lang="zh" onclick="switchLang('zh')">中</button>
+    </div>
+
     <span class="credits-badge" id="creditsBadge">🪙 0 张</span>
     <button class="btn btn-outline" id="loginBtn" onclick="showLogin()">登录</button>
     <button class="btn btn-primary" id="topupBtn" onclick="showTopup()" style="display:none">充值</button>
@@ -250,6 +436,45 @@
   </div>
 </header>
 
+<!-- 顶部横幅 -->
+<div class="hero-banner">
+  <h1>🔥 最便宜的图片生成网站 <span class="highlight">比竞品便宜 50%+</span> <span class="sub">低至 $0.020/张</span></h1>
+  <!-- 分享图标 -->
+  <div class="hero-share" onclick="toggleSharePopup()" title="分享给朋友">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    <span>分享</span>
+    <div class="share-popup" id="sharePopup">
+      <div class="sp-title">分享 AiCanvas</div>
+      <div class="sp-btns">
+        <a href="javascript:void(0)" onclick="shareTo('x')" class="sp-btn" title="X">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          <span>X</span>
+        </a>
+        <a href="javascript:void(0)" onclick="shareTo('facebook')" class="sp-btn" title="Facebook">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          <span>FB</span>
+        </a>
+        <a href="javascript:void(0)" onclick="shareTo('telegram')" class="sp-btn" title="Telegram">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.127-.022.284-.063.402l-2.546 10.94c-.051.225-.177.408-.34.508a.677.677 0 0 1-.396.115.703.703 0 0 1-.362-.089l-4.008-2.4-1.743 1.404a.333.333 0 0 1-.262.076.306.306 0 0 1-.214-.139.555.555 0 0 1-.092-.25l-.789-3.784-.004-.02s-.015-.075.058-.125c.088-.06.234-.088.347-.073l4.008 1.916c.108.052.223.032.283-.023.06-.055.073-.144.058-.225l2.612-9.908c.009-.035.012-.07.01-.103 0-.093-.03-.168-.068-.22a.344.344 0 0 0-.17-.11c-.062-.022-.134-.014-.19-.008-.088.009-.188.041-.283.075l-10.484 4.08c-.384.15-.64.285-.797.41-.12.096-.196.195-.215.32-.02.125.027.243.138.353.263.26.769.513 1.262.735l.018.008c.49.22 1.063.48 1.35.646.153.089.333.127.508.103a.738.738 0 0 0 .39-.192l6.96-5.596c-.003.002-.003.005-.004.007z"/></svg>
+          <span>TG</span>
+        </a>
+        <a href="javascript:void(0)" onclick="shareTo('whatsapp')" class="sp-btn" title="WhatsApp">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          <span>WA</span>
+        </a>
+        <a href="javascript:void(0)" onclick="shareTo('reddit')" class="sp-btn" title="Reddit">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.208.674-.331 1.074-.331.448 0 .872.166 1.188.471a1.64 1.64 0 0 1 .477 1.196c0 .464-.19.901-.5 1.205.022.15.032.303.032.458 0 2.64-3.288 4.79-7.34 4.79-4.052 0-7.34-2.15-7.34-4.79 0-.155.01-.308.032-.457a1.64 1.64 0 0 1-.5-1.205c0-.435.177-.86.477-1.196.316-.305.74-.471 1.188-.471.4 0 .766.123 1.074.33 1.194-.855 2.85-1.416 4.674-1.488l.785-3.67a.44.44 0 0 1 .074-.168.453.453 0 0 1 .362-.207l3.22-.677a1.246 1.246 0 0 1 1.17-.878zM9.82 12.18c-.464 0-.86.396-.86.86 0 .463.396.86.86.86.463 0 .86-.397.86-.86a.863.863 0 0 0-.86-.86zm4.35 0a.863.863 0 0 0-.86.86c0 .463.397.86.86.86.464 0 .86-.397.86-.86a.863.863 0 0 0-.86-.86zm-2.587 1.904c-.2 0-.36.078-.464.187-.105.109-.151.265-.075.41.237.453.676.735 1.255.735.58 0 1.018-.282 1.256-.735.076-.145.03-.301-.075-.41-.105-.109-.265-.187-.465-.187-.493 0-.716.332-.716.332s-.223-.332-.716-.332z"/></svg>
+          <span>Reddit</span>
+        </a>
+      </div>
+      <div class="sp-link-row">
+        <input type="text" id="shareLinkInput" readonly value="https://paint.deepapi.pro" onclick="this.select()">
+        <button class="btn-download" onclick="copyPageLink()">📋 复制链接</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="container">
 
   <div class="card">
@@ -262,6 +487,17 @@
     <div class="card-label">📏 选择尺寸</div>
     <div class="option-row" id="sizeRow"></div>
     <button class="btn-generate" id="genBtn" onclick="generate()">✨ 生成</button>
+    <!-- 引导注册横幅 -->
+    <div class="signup-banner" id="signupBanner">
+      <div class="sb-content">
+        <div class="sb-emoji">🎁</div>
+        <div class="sb-text">
+          <div class="sb-title">注册即送 <span class="sb-highlight">10 张</span> 免费额度</div>
+          <div class="sb-sub">免费体验 AI 图片生成，无需信用卡</div>
+        </div>
+        <button class="sb-btn" onclick="showRegister()">免费注册 →</button>
+      </div>
+    </div>
     <div class="result-area" id="resultArea">
       <div class="result-placeholder">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
@@ -282,13 +518,43 @@
 <!-- 充值套餐 Modal -->
 <div class="modal-overlay" id="plansModal">
   <div class="modal" style="max-width:520px">
-    <h2>💎 充值套餐</h2>
-    <p style="color:#9ca3af;font-size:13px;margin-bottom:16px">选择套餐，转账 USDT 到下方地址后联系管理员到账</p>
-    <div class="plans-grid" id="plansGridModal" style="margin-bottom:16px"></div>
-    <div style="text-align:center">
-      <p style="font-size:12px;color:#6b7280;margin-bottom:4px">💳 TRC-20 收款地址</p>
-      <code style="font-size:11px;color:#a78bfa;word-break:break-all;display:block;background:#13151d;padding:10px;border-radius:8px" id="walletAddr">TQ5dyshgSMrBxbuQMvSbfTqconC7Cze2q7</code>
+    <h2>💎 选择充值方式</h2>
+    <p style="color:#9ca3af;font-size:13px;margin-bottom:16px">选择支付方式完成充值，自动到账</p>
+
+    <!-- 价格展示区：只显示一个固定价位 -->
+    <div id="planPriceDisplay" style="text-align:center;margin-bottom:20px;background:#13151d;border-radius:12px;padding:20px;border:1px solid #2a2d3a"></div>
+
+    <!-- 两种支付方式选项卡 -->
+    <div class="pay-tabs" style="display:flex;gap:8px;margin-bottom:16px">
+      <button class="pay-tab active" id="payTabLS" onclick="switchPayMethod('ls')">💳 信用卡</button>
+      <button class="pay-tab" id="payTabUSDT" onclick="switchPayMethod('usdt')">₿ USDT TRC-20</button>
     </div>
+
+    <!-- LemonSqueezy 支付面板 -->
+    <div id="lsPayPanel">
+      <p style="color:#9ca3af;font-size:13px;text-align:center;margin-bottom:16px">使用信用卡/借记卡支付，即时到账</p>
+      <a id="lsCheckoutBtn" href="https://stevstore.lemonsqueezy.com/checkout/buy/9f29f9f3-9700-4e03-ad65-192450143768" target="_blank" style="text-decoration:none">
+        <button class="btn btn-primary" style="width:100%;padding:14px;font-size:16px">💳 信用卡支付 <span id="lsPriceLabel">$5</span></button>
+      </a>
+      <p style="font-size:12px;color:#6b7280;text-align:center;margin-top:8px">安全支付由 LemonSqueezy 提供</p>
+    </div>
+
+    <!-- USDT 支付面板 -->
+    <div id="usdtPayPanel" style="display:none">
+      <p style="color:#9ca3af;font-size:13px;text-align:center;margin-bottom:12px">转账 USDT 到下方 TRC-20 地址，自动到账</p>
+      <div style="text-align:center">
+        <p style="font-size:12px;color:#6b7280;margin-bottom:4px">📍 TRC-20 收款地址</p>
+        <code style="font-size:11px;color:#a78bfa;word-break:break-all;display:block;background:#13151d;padding:10px;border-radius:8px" id="walletAddr">TQ5dyshgSMrBxbuQMvSbfTqconC7Cze2q7</code>
+        <button class="btn btn-ghost" style="font-size:12px;margin-top:6px" onclick="copyAddr()">📋 复制地址</button>
+      </div>
+      <div style="margin-top:16px">
+        <label style="font-size:12px;color:#9ca3af;display:block;margin-bottom:6px">🔗 交易哈希 (TxID)</label>
+        <input type="text" id="usdtTxidInput" placeholder="粘贴 TRC-20 转账的 TxID" style="width:100%;padding:12px;background:#13151d;border:1px solid #2a2d3a;border-radius:10px;color:#e4e6ed;font-size:14px;outline:none;box-sizing:border-box">
+      </div>
+      <div id="usdtCheckStatus" style="text-align:center;margin:10px 0;font-size:13px;color:#9ca3af;display:none"></div>
+      <button class="btn btn-primary" id="usdtCheckBtn" onclick="checkUsdtPayment()" style="width:100%;padding:12px;margin-top:8px">🔍 验证到账</button>
+    </div>
+
     <div style="text-align:center;margin-top:16px">
       <button class="btn btn-outline" onclick="closePlansModal()">关闭</button>
     </div>
@@ -303,7 +569,7 @@
     <input type="email" id="emailInput" placeholder="邮箱">
     <div class="pwd-wrap">
       <input type="password" id="passwordInput" placeholder="密码">
-      <button class="pwd-toggle" onclick="togglePwd('passwordInput', this)">\ud83d\udc41</button>
+      <button class="pwd-toggle" onclick="togglePwd('passwordInput', this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
     </div>
     <button class="btn btn-primary" style="width:100%;padding:12px" id="modalActionBtn" onclick="handleAuth()">登录</button>
     <div class="switch-link">
@@ -328,7 +594,7 @@
       <input type="text" id="forgotCode" placeholder="输入6位验证码" maxlength="6" style="letter-spacing:4px;text-align:center;font-size:18px">
       <div class="pwd-wrap">
         <input type="password" id="forgotNewPwd" placeholder="新密码（至少4位）">
-        <button class="pwd-toggle" onclick="togglePwd('forgotNewPwd', this)">\ud83d\udc41</button>
+        <button class="pwd-toggle" onclick="togglePwd('forgotNewPwd', this)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
       <button class="btn btn-primary" style="width:100%;padding:12px" onclick="resetPassword()">重置密码</button>
     </div>
@@ -341,6 +607,10 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// — i18n system —
+const i18n = {en:{},
+zh:{}};
+
 let state = {
   user: null,
   models: {},
@@ -401,10 +671,12 @@ function renderSizeChips() {
   const row = document.getElementById('sizeRow');
   row.innerHTML = '';
   state.sizes.forEach(size => {
+    const label = typeof size === 'string' ? size : size.label;
+    const value = typeof size === 'string' ? size : size.value;
     const chip = document.createElement('button');
-    chip.className = 'option-chip' + (size === state.selectedSize ? ' active' : '');
-    chip.textContent = size;
-    chip.onclick = () => { state.selectedSize = size; renderSizeChips(); };
+    chip.className = 'option-chip' + (value === state.selectedSize ? ' active' : '');
+    chip.textContent = label;
+    chip.onclick = () => { state.selectedSize = value; renderSizeChips(); };
     row.appendChild(chip);
   });
 }
@@ -429,7 +701,13 @@ function updateUI() {
     creditsBadge.textContent = '\ud83e\ude99 0 \u5f20';
     document.getElementById('historyCard').style.display = 'none';
     document.getElementById('historyGrid').innerHTML = '';
+    // 显示注册引导横幅
+    var sb = document.getElementById('signupBanner');
+    if (sb) sb.classList.add('show');
   }
+  // 已登录时隐藏引导横幅
+  var sb = document.getElementById('signupBanner');
+  if (sb) sb.classList.toggle('show', !state.user);
   creditsBadge.textContent = state.user ? `\ud83e\ude99 ${state.user.credits} \u5f20` : '\ud83e\ude99 0 \u5f20';
 }
 
@@ -596,10 +874,10 @@ function togglePwd(inputId, btn) {
   if (!input) return;
   if (input.type === 'password') {
     input.type = 'text';
-    btn.textContent = '\ud83d\udc41\u200d\ud83d\udde8';
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
   } else {
     input.type = 'password';
-    btn.textContent = '\ud83d\udc41';
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
   }
 }
 
@@ -736,9 +1014,15 @@ function cancelGeneration() {
     _genTimerInterval = null;
   }
   const area = document.getElementById('resultArea');
-  area.innerHTML = '<div class="result-placeholder"><p style="color:#6b7280">\u2715 \u5df2\u53d6\u6d88\u751f\u6210</p></div>';
+  area.innerHTML = '<div class="result-placeholder"><p style="color:#6b7280">\u2715 \u5df2\u53d6\u6d88\uff0c\u8bf7\u91cd\u65b0\u751f\u6210</p></div>';
   document.getElementById('genBtn').disabled = false;
   document.getElementById('genBtn').textContent = '\u2728 \u751f\u6210';
+  // 将已输入的 prompt 放回原处
+  var promptInput = document.getElementById('promptInput');
+  if (promptInput && promptInput.value) {
+    promptInput.focus();
+    promptInput.setSelectionRange(promptInput.value.length, promptInput.value.length);
+  }
 }
 
 async function generate() {
@@ -809,6 +1093,40 @@ async function generate() {
     dlBtn.textContent = '⬇️ 下载图片';
     dlBtn.onclick = function() { downloadImage(data.image_url); };
     footer.appendChild(dlBtn);
+
+    // 分享按钮
+    const shareUrl = window.location.origin + '/api/image/' + data.gen_id;
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'btn-download';
+    copyBtn.textContent = '🔗 复制链接';
+    copyBtn.onclick = function() { copyShareLink(shareUrl); };
+    footer.appendChild(copyBtn);
+
+    const xBtn = document.createElement('button');
+    xBtn.className = 'btn-download';
+    xBtn.textContent = '𝕍 分享';
+    xBtn.onclick = function() {
+      var txt = encodeURIComponent('🎨 我用 AiCanvas 生成的图片，看看效果！');
+      window.open('https://twitter.com/intent/tweet?text=' + txt + '&url=' + encodeURIComponent(shareUrl), '_blank', 'width=600,height=500');
+    };
+    footer.appendChild(xBtn);
+
+    // 再试一次
+    const retryBtn = document.createElement('button');
+    retryBtn.className = 'btn-download';
+    retryBtn.style.color = '#a78bfa';
+    retryBtn.style.fontWeight = '700';
+    retryBtn.textContent = '🔄 再试一次';
+    retryBtn.onclick = function() {
+      var promptInput = document.getElementById('promptInput');
+      if (promptInput) {
+        promptInput.focus();
+        promptInput.setSelectionRange(promptInput.value.length, promptInput.value.length);
+      }
+      generate();
+    };
+    footer.appendChild(retryBtn);
+
     resultArea.appendChild(footer);
     state.user.credits = data.credits_left;
     updateUI();
@@ -839,27 +1157,151 @@ async function loadHistory() {
   }
   grid.innerHTML = data.generations.map(g =>
     '<div class="history-item">' +
+      '<button class="history-del" onclick="deleteGeneration(' + g.id + ')" title="\u5220\u9664">\u2716<\/button>' +
       '<img src="' + g.image_url + '" alt="' + (g.prompt || '').replace(/"/g, '&quot;') + '" loading="lazy">' +
-      '<div class="prompt-text">' + (g.prompt || '') + '</div>' +
-      '<button class="btn-download" onclick="downloadImage(\'' + g.image_url + '\')">\u2b07\ufe0f \u4e0b\u8f7d</button>' +
-    '</div>'
+      '<div class="prompt-text">' + (g.prompt || '') + '<\/div>' +
+      '<button class="btn-download" onclick="downloadImage(\'' + g.image_url + '\')">\u2b07\ufe0f \u4e0b\u8f7d<\/button>' +
+    '<\/div>'
   ).join('');
+}
+// ── 删除生成记录 ──
+async function deleteGeneration(genId) {
+  if (!confirm('\u786e\u5b9a\u5220\u9664\u8fd9\u5f20\u56fe\u7247\u5417\uff1f')) return;
+  try {
+    var res = await fetch('/api/generation/' + genId, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+    var data = await res.json();
+    if (data.success) {
+      toast('\u2705 \u5df2\u5220\u9664', 'success');
+      loadHistory();
+    } else {
+      toast('\u274c ' + (data.error || '\u5220\u9664\u5931\u8d25'), 'error');
+    }
+  } catch(e) {
+    toast('\u274c \u7f51\u7edc\u9519\u8bef', 'error');
+  }
+}
+
+
+
+// ── 套餐模态框 ──
+// 确保页面加载完后再检查登录状态
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    if (!state.user) {
+      var sb = document.getElementById('signupBanner');
+      if (sb) sb.classList.add('show');
+    }
+  });
+}
+
+// ── 支付方式切换 ──
+let currentPayMethod = 'ls';
+
+function switchPayMethod(method) {
+  currentPayMethod = method;
+  document.getElementById('payTabLS').className = method === 'ls' ? 'pay-tab active' : 'pay-tab';
+  document.getElementById('payTabUSDT').className = method === 'usdt' ? 'pay-tab active' : 'pay-tab';
+  document.getElementById('lsPayPanel').style.display = method === 'ls' ? 'block' : 'none';
+  document.getElementById('usdtPayPanel').style.display = method === 'usdt' ? 'block' : 'none';
+}
+
+function copyAddr() {
+  const addr = document.getElementById('walletAddr').textContent.trim();
+  navigator.clipboard.writeText(addr).then(function() {
+    toast('✅ 地址已复制', 'success');
+  }).catch(function() {
+    const ta = document.createElement('textarea');
+    ta.value = addr;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('✅ 地址已复制', 'success');
+  });
+}
+
+// ── USDT 验证到账 ──
+var checkUsdtLoading = false;
+async function checkUsdtPayment() {
+  if (checkUsdtLoading) return;
+  if (!state.user) { toast('⚠️ 请先登录', 'error'); return; }
+  
+  checkUsdtLoading = true;
+  var btn = document.getElementById('usdtCheckBtn');
+  var status = document.getElementById('usdtCheckStatus');
+  btn.disabled = true;
+  btn.textContent = '⏳ 正在验证链上到账...';
+  status.style.display = 'block';
+  status.textContent = '正在查询 TronScan...';
+  status.style.color = '#f59e0b';
+
+  var txid = document.getElementById('usdtTxidInput').value.trim();
+  if (!txid) {
+    toast('⚠️ 请先粘贴交易哈希 (TxID)', 'error');
+    checkUsdtLoading = false;
+    btn.disabled = false;
+    btn.textContent = '🔍 验证到账';
+    return;
+  }
+
+  try {
+    var res = await fetch('/api/usdt/check', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      credentials: 'include',
+      body: JSON.stringify({txid: txid})
+    });
+    var data = await res.json();
+
+    if (data.found) {
+      status.textContent = '✅ 已检测到到账！+' + data.credits_added + ' 张';
+      status.style.color = '#22c55e';
+      btn.textContent = '✅ 验证成功';
+      btn.style.background = '#22c55e';
+      // 更新额度
+      if (data.credits_left !== undefined) {
+        state.user.credits = data.credits_left;
+        updateUI();
+      }
+      toast('🎉 充值成功！+' + data.credits_added + ' 张', 'success');
+      // 3秒后关闭弹窗
+      setTimeout(function() { closePlansModal(); }, 3000);
+    } else {
+      status.textContent = data.message || '暂未检测到转账，请确认已转账后重试';
+      status.style.color = '#f59e0b';
+      btn.disabled = false;
+      btn.textContent = '✅ 已完成转账，重新验证';
+    }
+  } catch(e) {
+    status.textContent = '❌ 验证失败，请稍后重试';
+    status.style.color = '#ef4444';
+    btn.disabled = false;
+    btn.textContent = '✅ 已完成转账，重新验证';
+    toast('❌ 网络错误', 'error');
+  } finally {
+    checkUsdtLoading = false;
+  }
 }
 
 // ── 套餐模态框 ──
 async function showPlansModal() {
-  if (!state.user) { toast('\u26a0\ufe0f \u8bf7\u5148\u767b\u5f55', 'error'); return; }
-  const grid = document.getElementById('plansGridModal');
-  if (!grid.querySelector('.plan-card')) {
-    const res = await fetch('/api/plans');
-    const data = await res.json();
-    grid.innerHTML = Object.entries(data.plans).map(([key, p]) =>
-      '<div class="plan-card' + (key === 'popular' ? ' popular' : '') + '" data-usdt="' + p.usdt + '" onclick="selectPlan(\'' + key + '\', this)">' +
-        (key === 'popular' ? '<div class="badge" style="margin-bottom:8px">\ud83d\udd25 \u6700\u53d7\u6b22\u8fce</div>' : '') +
-        '<div class="price">$' + p.usdt + ' <small>USDT</small></div>' +
-        '<div class="desc">' + p.desc + '</div>' +
-      '</div>'
-    ).join('');
+  if (!state.user) { toast('⚠️ 请先登录', 'error'); return; }
+  const display = document.getElementById('planPriceDisplay');
+  const res = await fetch('/api/plans');
+  const data = await res.json();
+  const plans = data.plans || {};
+  const firstPlan = Object.values(plans)[0];
+  if (firstPlan) {
+    display.innerHTML =
+      '<div class="plan-price-box">' +
+        '<div class="price">$' + firstPlan.usdt + ' <small>USDT</small></div>' +
+        '<div class="desc">' + firstPlan.desc + '</div>' +
+      '</div>';
+    var lsPrice = document.getElementById('lsPriceLabel');
+    if (lsPrice) lsPrice.textContent = '$' + firstPlan.usdt;
   }
   document.getElementById('plansModal').classList.add('show');
 }
@@ -870,21 +1312,6 @@ function closePlansModal() {
 
 function showTopup() {
   showPlansModal();
-}
-
-function selectPlan(planKey, el) {
-  if (!state.user) { toast('\u26a0\ufe0f \u8bf7\u5148\u767b\u5f55', 'error'); return; }
-  // 清除其他卡片的选中样式
-  const cards = document.querySelectorAll('#plansGridModal .plan-card');
-  cards.forEach(function(c) { c.style.borderColor = ''; c.style.background = ''; });
-  // 高亮选中卡片
-  if (el) {
-    el.style.borderColor = '#8b5cf6';
-    el.style.background = '#2e1065';
-  }
-  // 从 data attributes 取价格
-  const usdt = el ? el.getAttribute('data-usdt') : '?';
-  toast('\ud83d\udcb3 \u8bf7\u8f6c\u8d26 ' + usdt + ' USDT \u5230 TRC-20 \u5730\u5740\uff0c\u8054\u7cfb\u7ba1\u7406\u5458\u5230\u8d26', 'success');
 }
 
 // ── 充值记录 ──
@@ -949,6 +1376,65 @@ function closeOrders() {
   closeModal('ordersModal');
 }
 
+// ── 分享 ──
+function copyShareLink(url) {
+  navigator.clipboard.writeText(url).then(function() {
+    toast('\u2705 \u94fe\u63a5\u5df2\u590d\u5236', 'success');
+  }).catch(function() {
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('\u2705 \u94fe\u63a5\u5df2\u590d\u5236', 'success');
+  });
+}
+
+// ── 页面分享面板 ──
+function toggleSharePopup() {
+  var popup = document.getElementById('sharePopup');
+  if (popup) popup.classList.toggle('show');
+  // 填充当前页面链接
+  var input = document.getElementById('shareLinkInput');
+  if (input) input.value = window.location.href;
+}
+
+function shareTo(platform) {
+  var url = encodeURIComponent(window.location.href);
+  var text = encodeURIComponent('\ud83c\udfa8 AiCanvas - \u6700\u4fbf\u5b9c\u7684\u56fe\u7247\u751f\u6210\u7f51\u7ad9\uff0c\u6bd4DALL\u00b7E 3 \u4fbf\u5b9c 50%+');
+  var shareUrls = {
+    x: 'https://twitter.com/intent/tweet?text=' + text + '&url=' + url,
+    facebook: 'https://www.facebook.com/sharer/sharer.php?u=' + url + '&quote=' + text,
+    telegram: 'https://t.me/share/url?url=' + url + '&text=' + text,
+    whatsapp: 'https://wa.me/?text=' + text + '%20' + url,
+    reddit: 'https://reddit.com/submit?url=' + url + '&title=' + text,
+  };
+  var link = shareUrls[platform];
+  if (link) window.open(link, '_blank', 'width=600,height=500');
+  // 关闭弹窗
+  var popup = document.getElementById('sharePopup');
+  if (popup) popup.classList.remove('show');
+}
+
+function copyPageLink() {
+  var input = document.getElementById('shareLinkInput');
+  if (input) {
+    input.select();
+    navigator.clipboard.writeText(input.value).then(function() {
+      toast('\u2705 \u94fe\u63a5\u5df2\u590d\u5236', 'success');
+    });
+  }
+}
+
+// \u70b9\u51fb\u5176\u4ed6\u5730\u65b9\u5173\u95ed\u5206\u4eab\u9762\u677f
+document.addEventListener('click', function(e) {
+  var popup = document.getElementById('sharePopup');
+  if (popup && !e.target.closest('.hero-share')) {
+    popup.classList.remove('show');
+  }
+});
+
 function toast(msg, type) {
   if (!type) type = 'info';
   const el = document.getElementById('toast');
@@ -958,5 +1444,35 @@ function toast(msg, type) {
   el._timer = setTimeout(() => el.classList.remove('show'), 3000);
 }
 </script>
+  <!-- 价格对比悬浮窗 -->
+  <div class="price-badge">
+    <div class="pb-icon">💰</div>
+    <div class="pb-content">
+      <div class="pb-title">比竞品便宜 50%</div>
+      <div class="pb-grid">
+        <div class="pb-item"><span class="pb-name">DALL·E 3</span><span class="pb-price old">$0.040</span></div>
+        <div class="pb-item"><span class="pb-name">Flux Pro</span><span class="pb-price old">$0.050</span></div>
+        <div class="pb-item"><span class="pb-name">Midjourney</span><span class="pb-price old">~$0.050</span></div>
+        <div class="pb-divider"></div>
+        <div class="pb-item ours"><span class="pb-name ours">🔥 AiCanvas</span><span class="pb-price new">$0.020</span></div>
+      </div>
+      <div class="pb-save">每张节省 50%+</div>
+    </div>
+  </div>
+  <!-- 价格对比悬浮窗 -->
+  <div class="price-badge">
+    <div class="pb-icon">💰</div>
+    <div class="pb-content">
+      <div class="pb-title">比竞品便宜 50%</div>
+      <div class="pb-grid">
+        <div class="pb-item"><span class="pb-name">DALL·E 3</span><span class="pb-price old">$0.040</span></div>
+        <div class="pb-item"><span class="pb-name">Flux Pro</span><span class="pb-price old">$0.050</span></div>
+        <div class="pb-item"><span class="pb-name">Midjourney</span><span class="pb-price old">~$0.050</span></div>
+        <div class="pb-divider"></div>
+        <div class="pb-item ours"><span class="pb-name ours">🔥 AiCanvas</span><span class="pb-price new">$0.020</span></div>
+      </div>
+      <div class="pb-save">每张节省 50%+</div>
+    </div>
+  </div>
 </body>
 </html>
