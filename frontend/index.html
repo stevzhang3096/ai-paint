@@ -667,8 +667,8 @@ var _i18n = {en:{
   deleted: '✅ Deleted',
   delete_failed: '❌ Delete failed',
   orders_loading: 'Loading...',
-  orders_empty: 'No top up history yet',
-  orders_hint: 'Click "Top Up" in top right to purchase',
+  orders_empty: '<span class="lang-en">No top up history yet</span><span class="lang-zh">还没有充值记录</span>',
+  orders_hint: '<span class="lang-en">Click "Top Up" in top right to purchase</span><span class="lang-zh">点击右上角"充值"按钮可以购买套餐</span>',
   
   pending_label: 'Pending',
   confirmed_label: 'Confirmed',
@@ -758,8 +758,8 @@ var _i18n = {en:{
   deleted: '✅ 已删除',
   delete_failed: '❌ 删除失败',
   orders_loading: '加载中...',
-  orders_empty: 'No top up history yet',
-  orders_hint: 'Click "Top Up" in top right to purchase',
+  orders_empty: '<span class="lang-en">No top up history yet</span><span class="lang-zh">还没有充值记录</span>',
+  orders_hint: '<span class="lang-en">Click "Top Up" in top right to purchase</span><span class="lang-zh">点击右上角"充值"按钮可以购买套餐</span>',
   
   pending_label: '待确认',
   confirmed_label: '已到账',
@@ -1113,14 +1113,14 @@ function showChangePwd() {
     modal.id = 'changePwdModal';
     modal.innerHTML =
       '<div class="modal" onclick="event.stopPropagation()">' +
-        '<h2>' + t('change_pwd_title') + '</h2>' +
+        '<div class="modal-header"><h2>🔒 <span class="lang-en">Change Password</span><span class="lang-zh">修改密码</span></h2><button class="modal-close" onclick="closeModal('changePwdModal')">✕</button></div>' +
         '<div class="error" id="changePwdError"></div>' +
-        '<div class="pwd-wrap"><input type="password" id="oldPwdInput" placeholder="' + t('pwd_old') + '"><button class="pwd-toggle" onclick="togglePwd(\'oldPwdInput\', this)">\ud83d\udc41</button></div>' +
-        '<div class="pwd-wrap"><input type="password" id="newPwdInput" placeholder="' + t('pwd_new') + '"><button class="pwd-toggle" onclick="togglePwd(\'newPwdInput\', this)">\ud83d\udc41</button></div>' +
-        '<button class="btn btn-primary" style="width:100%;padding:12px" onclick="doChangePwd()">' + t('change_pwd') + '</button>' +
-        '<div class="switch-link"><a onclick="closeModal(\'changePwdModal\')" style="color:#6b7280;cursor:pointer">' + t('pwd_modal_cancel') + '</a></div>' +
-      '</div>';
-    modal.addEventListener('click', function() { closeModal('changePwdModal'); });
+        '<div class="pwd-wrap"><input type="password" id="oldPwdInput" placeholder=""><button class="pwd-toggle" onclick="togglePwd('oldPwdInput', this)">👁</button></div>' +
+        '<div class="pwd-wrap"><input type="password" id="newPwdInput" placeholder=""><button class="pwd-toggle" onclick="togglePwd('newPwdInput', this)">👁</button></div>' +
+        '<button class="btn btn-primary" style="width:100%;padding:12px" onclick="doChangePwd()"><span class="lang-en">Change Password</span><span class="lang-zh">修改密码</span></button>' +
+        '<div class="switch-link"><a onclick="closeModal('changePwdModal')" style="color:#6b7280;cursor:pointer"><span class="lang-en">Cancel</span><span class="lang-zh">取消</span></a></div>' +
+      '</div>'
+modal.addEventListener('click', function() { closeModal('changePwdModal'); });
     document.body.appendChild(modal);
   }
   document.getElementById('changePwdError').style.display = 'none';
@@ -1510,15 +1510,15 @@ async function showOrders() {
     modal.id = modalId;
     modal.innerHTML =
       '<div class="modal" style="max-width:560px" onclick="event.stopPropagation()">' +
-        '<h2>\ud83d\udcb0 ' + t('orders_menu') + '</h2>' +
+        '<div class="modal-header"><h2>💰 <span class="lang-en">Top Up History</span><span class="lang-zh">充值记录</span></h2><button class="modal-close" onclick="closeOrders()">✕</button></div>' +
         '<div id="ordersList" style="margin-bottom:16px">' +
-          '<p style="color:#6b7280;text-align:center;padding:20px">' + t('orders_loading') + '</p>' +
+          '<p style="color:#6b7280;text-align:center;padding:20px"><span class="lang-en">Loading...</span><span class="lang-zh">加载中...</span></p>' +
         '</div>' +
         '<div style="text-align:center">' +
-          '<button class="btn btn-outline" onclick="closeOrders()">Close</button>' +
+          '<button class="btn btn-outline" onclick="closeOrders()"><span class="lang-en">Close</span><span class="lang-zh">关闭</span></button>' +
         '</div>' +
-      '</div>';
-    modal.addEventListener('click', function() { closeOrders(); });
+      '</div>'
+modal.addEventListener('click', function() { closeOrders(); });
     document.body.appendChild(modal);
   }
   modal.classList.add('show');
