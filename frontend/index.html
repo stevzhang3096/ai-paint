@@ -763,7 +763,7 @@ var _i18n = {en:{
   pwd_modal_cancel: '取消',
   pb_save: '每张节省 50%+'
 }};
-var _lang = localStorage.getItem("lang") || "en";
+var _lang = localStorage.getItem("lang") || "en"; document.querySelectorAll(".lang-btn").forEach(function(b){b.classList.toggle("active",b.dataset.lang===_lang);});
 document.documentElement.lang = _lang;
 function t(k){var s=_i18n[_lang]||_i18n.en;return s[k]!==undefined?s[k]:(_i18n.en[k]!==undefined?_i18n.en[k]:k);}
 function switchLang(l){_lang=l;localStorage.setItem("lang",l);document.documentElement.lang=l;document.querySelectorAll(".lang-btn").forEach(function(b){b.classList.toggle("active",b.dataset.lang===l);});applyI18n();}
