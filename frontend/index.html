@@ -783,7 +783,7 @@ var m={".i18n-hero":"hero",".i18n-hero-highlight":"hero_highlight",".i18n-hero-s
 ,".i18n-orders-title":"orders_menu",".i18n-close-order":"close"
 };
 for(var sel in m){document.querySelectorAll(sel).forEach(function(el){el.innerHTML=t(m[sel]);});}
-var pi=document.getElementById("promptInput");if(pi&&!pi.dataset.i18nSet)pi.placeholder=t("placeholder_text");
+var pi=document.getElementById("promptInput");if(pi&&!pi.dataset.i18nSet)pi.placeholder=t("placeholder_text");var fpi=document.getElementById("forgotNewPwd");if(fpi)fpi.placeholder=t("new_pwd");
 var cb=document.getElementById("creditsCount");var cu=document.getElementById("creditsUnit");
 if(cb){var c=state&&state.user?state.user.credits:0;cb.textContent=c;}if(cu)cu.innerHTML=t("credits_left");
 if(typeof renderModelChips==="function")renderModelChips();if(typeof renderSizeChips==="function")renderSizeChips();
@@ -1115,8 +1115,8 @@ function showChangePwd() {
       '<div class="modal" onclick="event.stopPropagation()">' +
         '<h2>' + t('change_pwd_title') + '</h2>' +
         '<div class="error" id="changePwdError"></div>' +
-        '<div class="pwd-wrap"><input type="password" id="oldPwdInput" placeholder="Current Password"><button class="pwd-toggle" onclick="togglePwd(\'oldPwdInput\', this)">\ud83d\udc41</button></div>' +
-        '<div class="pwd-wrap"><input type="password" id="newPwdInput" placeholder="New Password (at least 4 chars)"><button class="pwd-toggle" onclick="togglePwd(\'newPwdInput\', this)">\ud83d\udc41</button></div>' +
+        '<div class="pwd-wrap"><input type="password" id="oldPwdInput" placeholder="' + t('pwd_old') + '"><button class="pwd-toggle" onclick="togglePwd(\'oldPwdInput\', this)">\ud83d\udc41</button></div>' +
+        '<div class="pwd-wrap"><input type="password" id="newPwdInput" placeholder="' + t('pwd_new') + '"><button class="pwd-toggle" onclick="togglePwd(\'newPwdInput\', this)">\ud83d\udc41</button></div>' +
         '<button class="btn btn-primary" style="width:100%;padding:12px" onclick="doChangePwd()">' + t('change_pwd') + '</button>' +
         '<div class="switch-link"><a onclick="closeModal(\'changePwdModal\')" style="color:#6b7280;cursor:pointer">' + t('pwd_modal_cancel') + '</a></div>' +
       '</div>';
