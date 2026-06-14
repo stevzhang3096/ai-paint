@@ -1118,9 +1118,9 @@ function showChangePwd() {
         '<div class="pwd-wrap"><input type="password" id="oldPwdInput" placeholder=""><button class="pwd-toggle" onclick="togglePwd('oldPwdInput', this)">👁</button></div>' +
         '<div class="pwd-wrap"><input type="password" id="newPwdInput" placeholder=""><button class="pwd-toggle" onclick="togglePwd('newPwdInput', this)">👁</button></div>' +
         '<button class="btn btn-primary" style="width:100%;padding:12px" onclick="doChangePwd()"><span class="lang-en">Change Password</span><span class="lang-zh">修改密码</span></button>' +
-        '<div class="switch-link"><a onclick="closeModal('changePwdModal')" style="color:#6b7280;cursor:pointer"><span class="lang-en">Cancel</span><span class="lang-zh">取消</span></a></div>' +
-      '</div>'
-modal.addEventListener('click', function() { closeModal('changePwdModal'); });
+        '<div class="switch-link"><a onclick="closeModal(&apos;changePwdModal&apos;)" style="color:#6b7280;cursor:pointer"><span class="lang-en">Cancel</span><span class="lang-zh">取消</span></a></div>' +
+      '</div>';
+    modal.addEventListener('click', function() { closeModal('changePwdModal'); });
     document.body.appendChild(modal);
   }
   document.getElementById('changePwdError').style.display = 'none';
