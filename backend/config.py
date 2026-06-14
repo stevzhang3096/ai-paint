@@ -6,7 +6,7 @@ ZHIPU_API_KEY = "fc7e1baf04774595a5f038854646c61c.QGZw8VuctAKut8Gf"
 
 # MySQL 配置
 MYSQL_CONFIG = {
-    "host": "172.17.0.3",
+    "host": os.environ.get("DB_HOST", "localhost"),
     "port": 3306,
     "user": "paint",
     "password": "paint123",
