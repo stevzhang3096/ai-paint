@@ -309,6 +309,8 @@
     padding: 32px; width: 90%; max-width: 420px;
   }
   .modal h2 { margin-bottom: 20px; }
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.modal-header h2{margin:0}.modal-close{background:none;border:none;color:#6b7280;cursor:pointer;font-size:20px;padding:4px 8px;border-radius:6px;line-height:1;transition:all .15s}.modal-close:hover{color:#f87171;background:#2a2d3a}
+
   .pwd-wrap { position: relative; }
   .pwd-wrap input { width: 100%; padding: 12px 40px 12px 12px; margin-bottom: 12px; background: #13151d; border: 1px solid #2a2d3a; border-radius: 10px; color: #e4e6ed; font-size: 14px; outline: none; box-sizing: border-box; }
   .pwd-wrap input:focus { border-color: #8b5cf6; }
@@ -1034,6 +1036,7 @@ async function resetPassword() {
   }
 }
 
+function closeLoginModal() { document.getElementById('loginModal').classList.remove('show'); }
 function closeModal(id) {
   document.getElementById(id).classList.remove('show');
 }
