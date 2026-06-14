@@ -907,11 +907,9 @@ function showLogin() { isLogin = true; openModal(); }
 function showRegister() { isLogin = false; openModal(); }
 
 function openModal() {
-  document.getElementById('modalTitle').textContent = isLogin ? '\u767b\u5f55' : '\u6ce8\u518c';
-  document.getElementById('modalActionBtn').textContent = isLogin ? '\u767b\u5f55' : '\u6ce8\u518c';
-  document.getElementById('switchText').innerHTML = isLogin
-    ? '\u8fd8\u6ca1\u6709\u8d26\u53f7\uff1f<a id="switchAuth">\u53bb\u6ce8\u518c</a>'
-    : '\u5df2\u6709\u8d26\u53f7\uff1f<a id="switchAuth">\u53bb\u767b\u5f55</a>';
+  document.getElementById('modalTitle').textContent = isLogin ? t('login') : t('register');
+  document.getElementById('modalActionBtn').textContent = isLogin ? t('login') : t('register');
+  document.getElementById('switchText').innerHTML = isLogin ? t('no_account') : t('has_account');
   document.getElementById('switchAuth').onclick = () => { isLogin = !isLogin; openModal(); };
   document.getElementById('loginError').style.display = 'none';
   document.getElementById('emailInput').value = '';
@@ -946,7 +944,7 @@ async function handleAuth() {
   });
   const data = await res.json();
   if (!res.ok) {
-    errorEl.textContent = data.error || '\u64cd\u4f5c\u5931\u8d25';
+    errorEl.textContent = data.error || 'Operation failed';
     errorEl.style.display = 'block';
     return;
   }
