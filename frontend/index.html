@@ -1137,7 +1137,6 @@ function showChangePwd() {
         '<button class="btn btn-primary" style="width:100%;padding:12px" onclick="doChangePwd()"><span class="lang-en">Change Password</span><span class="lang-zh">修改密码</span></button>' +
         '<div class="switch-link"><a onclick="closeModal(&apos;changePwdModal&apos;)" style="color:#6b7280;cursor:pointer"><span class="lang-en">Cancel</span><span class="lang-zh">取消</span></a></div>' +
       '</div>';
-    modal.addEventListener('click', function() { closeModal('changePwdModal'); });
     document.body.appendChild(modal);
   }
   document.getElementById('changePwdError').style.display = 'none';
@@ -1535,7 +1534,6 @@ async function showOrders() {
           '<button class="btn btn-outline" onclick="closeOrders()"><span class="lang-en">Close</span><span class="lang-zh">关闭</span></button>' +
         '</div>' +
       '</div>'
-modal.addEventListener('click', function() { closeOrders(); });
     document.body.appendChild(modal);
   }
   modal.classList.add('show');
