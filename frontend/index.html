@@ -85,7 +85,7 @@
     transition: all .2s;
   }
   .user-menu-trigger:hover { border-color: #8b5cf6; color: #a78bfa; }
-  .user-menu-trigger::after { content: ' \u25bc'; font-size: 10px; opacity: .6; }
+  .user-menu-trigger::after { content: ' ▼'; font-size: 10px; opacity: .6; }
   .user-dropdown {
     position: absolute; top: 100%; right: 0; margin-top: 6px;
     min-width: 180px; background: #1a1c25; border: 1px solid #2a2d3a;
@@ -650,13 +650,13 @@ var _i18n = {en:{
   no_account: 'Don\'t have an account? <a id=\'switchAuth\'>Sign Up</a>',
   has_account: 'Already have an account? <a id=\'switchAuth\'>Log In</a>',
   forgot_title: '🔑 Forgot Password',
-  choose_payment: '💎 Choose Payment Method',
+  choose_payment: 'Choose Payment Method',
   payment_desc: 'Select payment method to top up, instant credit',
-  credit_card: '💳 Credit Card',
+  credit_card: 'Credit Card',
   secure_payment: 'Secure payment by LemonSqueezy',
   usdt_pay: '₿ USDT TRC-20',
   pay_now: 'Pay',
-  usdt_address: '📍 TRC-20 Address',
+  usdt_address: 'TRC-20 Address',
   copy_addr: '📋 Copy Address',
   txid_placeholder: 'Paste TRC-20 TxID',
   verify_btn: '🔍 Verify Payment',
@@ -744,13 +744,13 @@ var _i18n = {en:{
   no_account: '还没有账号？<a id=\'switchAuth\'>去注册</a>',
   has_account: '已有账号？<a id=\'switchAuth\'>去登录</a>',
   forgot_title: '🔑 找回密码',
-  choose_payment: '💎 选择充值方式',
+  choose_payment: '选择充值方式',
   payment_desc: '选择支付方式完成充值，自动到账',
-  credit_card: '💳 信用卡',
+  credit_card: '信用卡',
   secure_payment: '安全支付由 LemonSqueezy 提供',
   usdt_pay: '₿ USDT TRC-20',
   pay_now: '信用卡支付',
-  usdt_address: '📍 TRC-20 收款地址',
+  usdt_address: 'TRC-20 收款地址',
   copy_addr: '📋 复制地址',
   txid_placeholder: '粘贴 TRC-20 转账的 TxID',
   verify_btn: '🔍 验证到账',
@@ -890,15 +890,17 @@ function updateUI() {
     loginBtn.style.display = 'none';
     topupBtn.style.display = 'inline-block';
     userMenuWrap.style.display = 'inline-block';
-    document.getElementById('userMenuTrigger').textContent = state.user.email;
-    creditsBadge.textContent = '🪙 ' + state.user.credits + ' ' + t('credits_left');
+    document.getElementById('userMenuTrigger').textContent = state.user.email + ' ▼';
+    document.getElementById('creditsCount').textContent = state.user.credits;
+    document.getElementById('creditsUnit').textContent = t('credits_left');
     document.getElementById('historyCard').style.display = 'block';
     loadHistory();
   } else {
     loginBtn.style.display = 'inline-block';
     topupBtn.style.display = 'none';
     userMenuWrap.style.display = 'none';
-    creditsBadge.textContent = '🪙 0 ' + t('credits_left');
+    document.getElementById('creditsCount').textContent = '0';
+    document.getElementById('creditsUnit').textContent = t('credits_left');
     document.getElementById('historyCard').style.display = 'none';
     document.getElementById('historyGrid').innerHTML = '';
     // 显示注册引导横幅
@@ -929,11 +931,7 @@ function openModal() {
 }
 
 // 点击遮罩关闭弹窗
-document.querySelectorAll('.modal-overlay').forEach(el => {
-  el.addEventListener('click', function(e) {
-    if (e.target === this) this.classList.remove('show');
-  });
-});
+// 遮罩点击不再关闭弹窗，必须点击 X 按钮
 
 async function handleAuth() {
   const email = document.getElementById('emailInput').value.trim();
