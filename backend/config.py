@@ -69,9 +69,8 @@ MAIL_CONFIG = {
 # 验证码有效期（分钟）
 VERIFY_CODE_EXPIRE_MINUTES = 10
 
-# LemonSqueezy Webhook Secret（在 LS 后台 Settings → Webhooks 里设置）
-# 留空则不验证签名（仅开发测试用）
-LEMON_SQUEEZY_WEBHOOK_SECRET = ""
+# （已停用）LemonSqueezy Webhook Secret
+# LEMON_SQUEEZY_WEBHOOK_SECRET = ""
 
 # 服务器端口
 PORT = 5001

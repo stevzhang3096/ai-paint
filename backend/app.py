@@ -642,86 +642,14 @@ def usdt_check_payment():
         print(f"[USDT] ❌ 验证异常: {e}", flush=True)
         return jsonify({"error": "验证失败，请稍后重试", "retryable": True}), 500
 
-# ── LemonSqueezy Webhook ──
-@app.route('/api/ls-webhook', methods=['POST'])
-def ls_webhook():
-    """接收 LemonSqueezy 支付成功回调"""
-    import hashlib, hmac
+# ── LemonSqueezy Webhook（已注释，暂时停用） ──
+# @app.route('/api/ls-webhook', methods=['POST'])
+# def ls_webhook():
+#     """接收 LemonSqueezy 支付成功回调（已停用）"""
+#     return jsonify({"ok": True})
 
-    # 验证签名（LS 用 Secret 签名）
-    secret = config.LEMON_SQUEEZY_WEBHOOK_SECRET.encode()
-    signature = request.headers.get('X-Signature', '')
 
-    # LS 的签名是 HMAC-SHA256 的 hex 字符串
-    payload = request.get_data()
-    expected_sig = hmac.new(secret, payload, hashlib.sha256).hexdigest()
-
-    # 有 secret 时才验证签名（没配就先跳过验证）
-    if config.LEMON_SQUEEZY_WEBHOOK_SECRET and signature != expected_sig:
-        print(f"[LS] ⚠️ 签名验证失败: {signature[:20]}... != {expected_sig[:20]}...", flush=True)
-        return jsonify({"error": "invalid signature"}), 401
-
-    data = request.get_json()
-    if not data or data.get('meta', {}).get('event_name') != 'order_created':
-        # 只处理 order_created 事件
-        return jsonify({"ok": True})
-
-    try:
-        attrs = data.get('data', {}).get('attributes', {})
-        customer_email = attrs.get('user_email', '').lower()
-        variant_name = attrs.get('variant_name', '')
-        order_id = attrs.get('order_id', 0)
-        total_usd = float(attrs.get('total', 0))
-
-        if not customer_email or not variant_name:
-            print(f"[LS] ⚠️ 缺少必要字段: email={customer_email}, variant={variant_name}", flush=True)
-            return jsonify({"ok": True})
-
-        # 查找用户（通过 email）
-        user = db.get_user_by_email(customer_email)
-        if not user:
-            # 用户不存在，尝试注册一个
-            import hashlib as hl
-            import secrets
-            temp_pwd = secrets.token_hex(8)
-            user = db.create_user(customer_email, temp_pwd)
-            if not user:
-                print(f"[LS] ⚠️ 无法为用户创建账号: {customer_email}", flush=True)
-                return jsonify({"ok": True})
-            print(f"[LS] 为新用户创建账号: {customer_email}", flush=True)
-
-        # 匹配套餐
-        plans = db.get_plans()
-        matched_plan = None
-        for p in plans:
-            # 根据 variant_name 匹配套餐名，或按金额匹配
-            if p['name'].lower() in variant_name.lower() or abs(float(p['usdt']) - total_usd) < 1:
-                matched_plan = p
-                break
-
-        if not matched_plan and plans:
-            # 兜底：用第一个套餐
-            matched_plan = plans[0]
-
-        if matched_plan:
-            credits_to_add = matched_plan['credits']
-            db.add_credits(user['id'], credits_to_add)
-            db.create_order(user['id'], f"ls_{order_id}", total_usd, matched_plan['name'], credits_to_add)
-            db.confirm_order(f"ls_{order_id}")
-            print(f"[LS] ✅ {customer_email} 充值成功: {matched_plan['name']} (+{credits_to_add}张)", flush=True)
-        else:
-            # 没有匹配套餐，按 $1 = 10 张给
-            credits_to_add = int(total_usd * 10)
-            db.add_credits(user['id'], credits_to_add)
-            db.create_order(user['id'], f"ls_{order_id}", total_usd, "按量充值", credits_to_add)
-            db.confirm_order(f"ls_{order_id}")
-            print(f"[LS] ✅ {customer_email} 按量充值: ${total_usd} (+{credits_to_add}张)", flush=True)
-
-    except Exception as e:
-        print(f"[LS] ❌ webhook 处理异常: {e}", flush=True)
-
-    return jsonify({"ok": True})
-
+# ── 启动 ──
 # ── 启动 ──
 if __name__ == '__main__':
     print(f"🚀 AI Paint 启动中 → http://0.0.0.0:{config.PORT}")

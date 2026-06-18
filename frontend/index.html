@@ -506,29 +506,32 @@ html[lang="zh"] .lang-en { display: none; }
 <!-- 充值套餐 Modal -->
 <div class="modal-overlay" id="plansModal">
   <div class="modal" style="max-width:520px">
-    <div class="modal-header" style="margin-bottom:0"><h2>💎 <span class="i18n-choose-payment">Choose Payment Method</span></h2><button class="modal-close" onclick="closePlansModal()">✕</button></div>
-    <p style="color:#9ca3af;font-size:13px;margin-bottom:16px" class="i18n-payment-desc">Select payment method to top up, instant credit</p>
+    <div class="modal-header" style="margin-bottom:0"><h2>💎 <span class="i18n-choose-payment">Account Top Up</span></h2><button class="modal-close" onclick="closePlansModal()">✕</button></div>
 
     <!-- 价格展示区：只显示一个固定价位 -->
     <div id="planPriceDisplay" style="text-align:center;margin-bottom:20px;background:#13151d;border-radius:12px;padding:20px;border:1px solid #2a2d3a"></div>
 
-    <!-- 两种支付方式选项卡 -->
-    <div class="pay-tabs" style="display:flex;gap:8px;margin-bottom:16px">
-      <button class="pay-tab active" id="payTabLS" onclick="switchPayMethod('ls')">💳 <span class="i18n-credit-card">Credit Card</span></button>
-      <button class="pay-tab" id="payTabUSDT" onclick="switchPayMethod('usdt')">₿ USDT TRC-20</button>
+    <!-- 支付方式：仅 USDT -->
+    <div style="text-align:center;margin-bottom:16px">
+      <span style="display:inline-block;padding:10px 24px;background:#7c3aed;color:#fff;border-radius:10px;font-size:14px;font-weight:500">₿ USDT TRC-20</span>
     </div>
 
-    <!-- LemonSqueezy 支付面板 -->
+    <!-- LemonSqueezy 支付面板（已注释，已停用） -->
+    <!--
     <div id="lsPayPanel">
       <p style="color:#9ca3af;font-size:13px;text-align:center;margin-bottom:16px" class="i18n-ls-desc">Pay with credit/debit card, instant credit</p>
       <a id="lsCheckoutBtn" href="https://stevstore.lemonsqueezy.com/checkout/buy/9f29f9f3-9700-4e03-ad65-192450143768" target="_blank" style="text-decoration:none">
         <button class="btn btn-primary" style="width:100%;padding:14px;font-size:16px">💳 <span class="i18n-pay-now">Pay</span> <span id="lsPriceLabel">$5</span></button>
       </a>
-      <p style="font-size:12px;color:#6b7280;text-align:center;margin-top:8px" class="i18n-secure-payment">Secure payment by LemonSqueezy</p>
+      <p style="font-size:12px;color:#6b7280;text-align:center;margin-top:8px" class="i18n-secure-payment">Secure payment</p>
     </div>
+    <p style="font-size:12px;color:#6b7280;text-align:center;margin-top:8px" class="i18n-secure-payment">Secure payment</p>
+    </div>
+    <p style="font-size:12px;color:#6b7280;text-align:center;margin-top:8px" class="i18n-secure-payment">Secure payment</p>
+    -->
 
     <!-- USDT 支付面板 -->
-    <div id="usdtPayPanel" style="display:none">
+    <div id="usdtPayPanel">
       <p style="color:#9ca3af;font-size:13px;text-align:center;margin-bottom:12px" class="i18n-usdt-desc">Transfer USDT to the TRC-20 address below, auto-credited</p>
       <div style="text-align:center">
         <p style="font-size:12px;color:#6b7280;margin-bottom:4px">📍 <span class="i18n-usdt-address">TRC-20 Address</span></p>
@@ -650,10 +653,10 @@ var _i18n = {en:{
   no_account: 'Don\'t have an account? <a id=\'switchAuth\'>Sign Up</a>',
   has_account: 'Already have an account? <a id=\'switchAuth\'>Log In</a>',
   forgot_title: '🔑 Forgot Password',
-  choose_payment: 'Choose Payment Method',
-  payment_desc: 'Select payment method to top up, instant credit',
+  choose_payment: 'Account Top Up',
+  payment_desc: 'Top up your account, instant credit',
   credit_card: 'Credit Card',
-  secure_payment: 'Secure payment by LemonSqueezy',
+  secure_payment: 'Secure payment',
   usdt_pay: '₿ USDT TRC-20',
   pay_now: 'Pay',
   usdt_address: 'TRC-20 Address',
@@ -744,10 +747,10 @@ var _i18n = {en:{
   no_account: '还没有账号？<a id=\'switchAuth\'>去注册</a>',
   has_account: '已有账号？<a id=\'switchAuth\'>去登录</a>',
   forgot_title: '🔑 找回密码',
-  choose_payment: '选择充值方式',
-  payment_desc: '选择支付方式完成充值，自动到账',
+  choose_payment: '账户充值',
+  payment_desc: '充值到账，自动加额',
   credit_card: '信用卡',
-  secure_payment: '安全支付由 LemonSqueezy 提供',
+  secure_payment: '安全支付',
   usdt_pay: '₿ USDT TRC-20',
   pay_now: '信用卡支付',
   usdt_address: 'TRC-20 收款地址',
@@ -1395,30 +1398,33 @@ if (document.readyState === 'loading') {
   });
 }
 
-// ── 支付方式切换 ──
-let currentPayMethod = 'ls';
+// ── 支付方式切换（已简化为仅 USDT） ──
+let currentPayMethod = 'usdt';
 
 function switchPayMethod(method) {
   currentPayMethod = method;
-  document.getElementById('payTabLS').className = method === 'ls' ? 'pay-tab active' : 'pay-tab';
-  document.getElementById('payTabUSDT').className = method === 'usdt' ? 'pay-tab active' : 'pay-tab';
-  document.getElementById('lsPayPanel').style.display = method === 'ls' ? 'block' : 'none';
-  document.getElementById('usdtPayPanel').style.display = method === 'usdt' ? 'block' : 'none';
 }
 
 function copyAddr() {
   const addr = document.getElementById('walletAddr').textContent.trim();
-  navigator.clipboard.writeText(addr).then(function() {
-    toast('✅ 地址已复制', 'success');
-  }).catch(function() {
-    const ta = document.createElement('textarea');
-    ta.value = addr;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    toast('✅ 地址已复制', 'success');
-  });
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(addr).then(function() {
+      toast(t('addr_copied'), 'success');
+    }).catch(function() {
+      fallbackCopy(addr);
+    });
+  } else {
+    fallbackCopy(addr);
+  }
+}
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  toast(t('addr_copied'), 'success');
 }
 
 // ── USDT 验证到账 ──
@@ -1498,8 +1504,7 @@ async function showPlansModal() {
         '<div class="price">$' + firstPlan.usdt + ' <small>USDT</small></div>' +
         '<div class="desc">' + firstPlan.desc + '</div>' +
       '</div>';
-    var lsPrice = document.getElementById('lsPriceLabel');
-    if (lsPrice) lsPrice.textContent = '$' + firstPlan.usdt;
+    // lsPriceLabel 已停用
   }
   document.getElementById('plansModal').classList.add('show');
 }
