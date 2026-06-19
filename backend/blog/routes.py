@@ -23,7 +23,7 @@ def blog_index():
         meta_title="AiCanvas Blog — AI Image Generation Tips, Tutorials & News",
         meta_description=(
             "Learn how to generate stunning AI images on a budget. "
-            "Tutorials, comparisons, and tips for CogView-4, DALL-E alternatives, "
+            "Tutorials, comparisons, and tips for DALL-E alternatives "
             "and cheap AI image generation."
         ),
     )
@@ -96,7 +96,7 @@ def rss_feed():
   <channel>
     <title>AiCanvas Blog — AI Image Generation</title>
     <link>{base_url}/blog/</link>
-    <description>Tips, tutorials, and news about affordable AI image generation with CogView-4 and other models.</description>
+    <description>Tips, tutorials, and news about affordable AI image generation.</description>
     <language>en</language>
     <lastBuildDate>{datetime.datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</lastBuildDate>
     <atom:link href="{base_url}/feed.xml" rel="self" type="application/rss+xml"/>

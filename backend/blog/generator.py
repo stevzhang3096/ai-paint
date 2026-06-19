@@ -3,7 +3,7 @@ SEO 博客文章自动生成脚本
 使用 deepapi.pro 的 API（OpenAI 兼容）自动撰写英文技术博客 → 存入数据库
 
 本地测试：cd /root/.openclaw/workspace/ai-paint && python -m backend.blog.generator
-服务器：DEEPAPI_KEY=xxx python /var/www/paint/backend/blog/generator.py
+服务器：DB_HOST=127.0.0.1 python3 /var/www/paint/backend/blog/generator.py
 """
 import os
 import sys
@@ -17,7 +17,7 @@ import config as app_config
 import blog.models as m
 
 API_BASE = "https://api.deepapi.pro/v1"
-API_KEY = os.environ.get("DEEPAPI_KEY", "")
+API_KEY = ***"DEEPAPI_KEY", "")
 
 # ── 主题池 ──
 TOPICS = [
@@ -25,7 +25,7 @@ TOPICS = [
         "angle": "comparison",
         "template": "Cheap AI Image Generators in 2025: {a} vs {b} vs {c}",
         "keywords": "cheap AI image generator, affordable AI art, budget AI image generation",
-        "models": ["DALL-E 3", "Midjourney", "CogView-4", "Stable Diffusion 3", "Adobe Firefly"],
+        "models": ["DALL-E 3", "Midjourney", "Stable Diffusion 3", "Adobe Firefly"],
     },
     {
         "angle": "tutorial",
@@ -47,8 +47,8 @@ TOPICS = [
     },
     {
         "angle": "analysis",
-        "template": "CogView-4 vs {x}: Which AI Model Makes Better Images?",
-        "keywords": "CogView-4 review, CogView vs DALL-E, CogView vs Midjourney, Zhipu AI",
+        "template": "AiCanvas vs {x}: Which AI Image Platform Is Better for Budget Creators?",
+        "keywords": "AiCanvas review, AiCanvas vs DALL-E, AiCanvas vs Midjourney, best cheap AI image platform",
         "competitors": ["DALL-E 3", "Midjourney V6", "Stable Diffusion 3.5", "FLUX.1"],
     },
     {
@@ -69,18 +69,15 @@ TOPICS = [
 
 COMPARISON_TEMPLATE = """<h2>Why Cost Matters in AI Image Generation</h2>
 <p>If you're generating AI images regularly — for e-commerce, social media, game assets, or marketing — the cost adds up fast. DALL-E 3 ($0.04–$0.12/image) and Midjourney ($10–$60/month subscription) work great, but they're far from budget-friendly for high-volume users.</p>
-<p>That's where <strong>AiCanvas</strong> changes the game. Powered by Zhipu AI's <strong>CogView-4</strong> model, our platform delivers comparable quality at a fraction of the cost — as low as <strong>$0.02 per image</strong>.</p>
+<p>That's where <strong>AiCanvas</strong> changes the game — delivering comparable quality at a fraction of the cost, as low as <strong>$0.02 per image</strong>.</p>
 
-<h2>Price Comparison: {a} vs {b} vs CogView-4</h2>
+<h2>Price Comparison: {a} vs {b} vs AiCanvas</h2>
 <table style="width:100%; border-collapse:collapse; margin:16px 0;">
-<tr style="background:#2a2d3a;"><th style="padding:8px;border:1px solid #374151;">Platform</th><th style="padding:8px;border:1px solid #374151;">Model</th><th style="padding:8px;border:1px solid #374151;">Per Image</th><th style="padding:8px;border:1px solid #374151;">Monthly (1000 img)</th></tr>
-<tr><td style="padding:8px;border:1px solid #374151;">OpenAI</td><td style="padding:8px;border:1px solid #374151;">{a}</td><td style="padding:8px;border:1px solid #374151;">$0.04–$0.12</td><td style="padding:8px;border:1px solid #374151;">$40–$120</td></tr>
-<tr><td style="padding:8px;border:1px solid #374151;">Midjourney</td><td style="padding:8px;border:1px solid #374151;">{b}</td><td style="padding:8px;border:1px solid #374151;">~$0.05–$0.20</td><td style="padding:8px;border:1px solid #374151;">$30–$60</td></tr>
-<tr style="background:#8b5cf622;"><td style="padding:8px;border:1px solid #374151;"><strong>AiCanvas</strong></td><td style="padding:8px;border:1px solid #374151;"><strong>CogView-4</strong></td><td style="padding:8px;border:1px solid #374151;"><strong>$0.02</strong></td><td style="padding:8px;border:1px solid #374151;"><strong>$20</strong></td></tr>
+<tr style="background:#2a2d3a;"><th style="padding:8px;border:1px solid #374151;">Platform</th><th style="padding:8px;border:1px solid #374151;">Per Image</th><th style="padding:8px;border:1px solid #374151;">Monthly (1000 img)</th></tr>
+<tr><td style="padding:8px;border:1px solid #374151;">OpenAI ({a})</td><td style="padding:8px;border:1px solid #374151;">$0.04–$0.12</td><td style="padding:8px;border:1px solid #374151;">$40–$120</td></tr>
+<tr><td style="padding:8px;border:1px solid #374151;">Midjourney ({b})</td><td style="padding:8px;border:1px solid #374151;">~$0.05–$0.20</td><td style="padding:8px;border:1px solid #374151;">$30–$60</td></tr>
+<tr style="background:#8b5cf622;"><td style="padding:8px;border:1px solid #374151;"><strong>AiCanvas</strong></td><td style="padding:8px;border:1px solid #374151;"><strong>$0.02</strong></td><td style="padding:8px;border:1px solid #374151;"><strong>$20</strong></td></tr>
 </table>
-
-<h2>Image Quality Comparison</h2>
-<p>CogView-4 has made tremendous strides. It handles complex prompts, consistent character rendering, and stylistic diversity surprisingly well. While {a} still leads in photorealism and {b} excels at artistic interpretation, CogView-4 is closing the gap rapidly.</p>
 
 <h2>Key Features You Get with AiCanvas</h2>
 <ul>
@@ -122,7 +119,7 @@ TUTORIAL_TEMPLATE = """<h2>Why You Don't Need to Spend a Fortune</h2>
 <p><a href="https://paint.deepapi.pro"><strong>Start creating {s} images →</strong></a></p>"""
 
 USE_CASE_TEMPLATE = """<h2>Why {u} Needs Affordable AI Images</h2>
-<p>AiCanvas offers the most cost-effective solution — <strong>$0.02 per image</strong>, powered by CogView-4.</p>
+<p>AiCanvas offers the most cost-effective solution — <strong>$0.02 per image</strong>, with fast generation and no subscription required.</p>
 
 <h2>How AiCanvas Helps</h2>
 <ul>
@@ -148,31 +145,31 @@ USE_CASE_TEMPLATE = """<h2>Why {u} Needs Affordable AI Images</h2>
 </ol>
 <p><a href="https://paint.deepapi.pro"><strong>Start saving on {u} images →</strong></a></p>"""
 
-ANALYSIS_TEMPLATE = """<h2>The Rise of CogView-4</h2>
-<p>In 2025, Zhipu AI's CogView-4 has emerged as a serious contender in AI image generation — especially on price.</p>
+ANALYSIS_TEMPLATE = """<h2>How AiCanvas Delivers the Best Value in AI Image Generation</h2>
+<p>When people talk about AI image generation, the conversation usually starts and ends with DALL-E and Midjourney. But in 2025, AiCanvas has emerged as the smart choice for budget-conscious creators.</p>
 
-<h2>CogView-4 vs {x}: Head to Head</h2>
+<h2>AiCanvas vs {x}: Head to Head</h2>
 
-<h3>1. Quality</h3>
+<h3>1. Image Quality</h3>
 <ul>
-<li><strong>Photorealism:</strong> {x} leads by a small margin</li>
-<li><strong>Style diversity:</strong> CogView-4 is comparable, stronger in Asian art styles</li>
-<li><strong>Prompt adherence:</strong> CogView-4 scores highly on complex prompts</li>
+<li><strong>Photorealism:</strong> {x} leads by a small margin, but AiCanvas is impressively close</li>
+<li><strong>Style diversity:</strong> AiCanvas handles everything from realistic to artistic styles well</li>
+<li><strong>Prompt adherence:</strong> AiCanvas scores highly on complex, multi-element prompts</li>
 </ul>
 
 <h3>2. Speed</h3>
-<p>CogView-4 generates in 5–15 seconds — competitive with or faster than most alternatives.</p>
+<p>AiCanvas generates images in seconds — competitive with or faster than most alternatives.</p>
 
 <h3>3. Cost</h3>
 <ul>
 <li>{x}: $0.04–$0.20/image</li>
-<li><strong>CogView-4 (AiCanvas): $0.02/image</strong></li>
+<li><strong>AiCanvas: $0.02/image</strong></li>
 </ul>
 
 <h3>4. Simplicity</h3>
 <p>No API keys, no WebSocket setup, no server config. Sign up, deposit USDT, generate.</p>
 
-<h2>When to Choose CogView-4</h2>
+<h2>When to Choose AiCanvas Over {x}</h2>
 <ul>
 <li>High volume (50+ images/day)</li>
 <li>Pay-as-you-go preferred over subscriptions</li>
@@ -180,10 +177,10 @@ ANALYSIS_TEMPLATE = """<h2>The Rise of CogView-4</h2>
 <li>Crypto payments preferred</li>
 </ul>
 
-<p><a href="https://paint.deepapi.pro"><strong>Try CogView-4 on AiCanvas →</strong></a></p>"""
+<p><a href="https://paint.deepapi.pro"><strong>Try AiCanvas for yourself →</strong></a></p>"""
 
 TIPS_TEMPLATE = """<h2>Why Prompt Quality Matters</h2>
-<p>Here are 10 {t} prompts that consistently deliver great results with CogView-4 on AiCanvas.</p>
+<p>Here are 10 {t} prompts that consistently deliver great results with AiCanvas.</p>
 
 <h3>1. Classic {t}</h3>
 <pre><code>{p1}</code></pre>
@@ -228,7 +225,6 @@ TREND_TEMPLATE = """<h2>The Real Cost of AI Images in 2025</h2>
 <ul>
 <li>Price compression — costs dropping as models improve</li>
 <li>Pay-as-you-go winning over subscriptions</li>
-<li>Chinese AI models offering competitive quality at lower prices</li>
 <li>Crypto payments becoming standard</li>
 </ul>
 
@@ -259,10 +255,9 @@ PROMPT_STYLES = {
 def get_api():
     """返回 (base_url, api_key) 或 None"""
     if API_KEY:
-        return API_BASE, API_KEY
-    # fallback to Zhipu
+        *** API_BASE, API_KEY
     if app_config.ZHIPU_API_KEY:
-        return None, app_config.ZHIPU_API_KEY
+        *** None, app_config.ZHIPU_API_KEY
     return None, None
 
 
@@ -270,11 +265,10 @@ def generate_content(system_prompt, user_prompt):
     """调用 LLM 生成内容"""
     api, key = get_api()
     if not key:
-        print("[Generator] ❌ No API key configured. Set DEEPAPI_KEY or ZHIPU_API_KEY in config.")
+        print("[Generator] ❌ No API key configured.")
         return None
 
     if api:
-        # deepapi.pro OpenAI 兼容
         try:
             resp = requests.post(
                 f"{api}/chat/completions",
@@ -296,7 +290,6 @@ def generate_content(system_prompt, user_prompt):
         except Exception as e:
             print(f"[Generator] API call failed: {e}")
     else:
-        # ZhipuAI SDK
         try:
             from zhipuai import ZhipuAI
             client = ZhipuAI(api_key=key)
@@ -322,12 +315,12 @@ def generate_article(topic):
     angle = topic["angle"]
 
     if angle == "comparison":
-        models = random.sample(topic["models"], 3)
-        a, b, c = models[0], models[1], models[2]
-        title = topic["template"].format(a=a, b=b, c=c)
+        models = random.sample(topic["models"], 2)
+        a, b = models[0], models[1]
+        title = topic["template"].format(a=a, b=b, c="AiCanvas")
         content = COMPARISON_TEMPLATE.format(a=a, b=b)
-        excerpt = f"Compare {a}, {b}, and CogView-4 for AI image generation in 2025. Find which offers the best value."
-        meta = f"{a} vs {b} vs CogView-4 — price and quality comparison. CogView-4 on AiCanvas is only $0.02/image."
+        excerpt = f"Compare {a}, {b}, and AiCanvas for AI image generation in 2025. Find which offers the best value."
+        meta = f"{a} vs {b} vs AiCanvas — price and quality comparison. AiCanvas is only $0.02/image."
         return title, content, excerpt, meta, topic["keywords"]
 
     elif angle == "tutorial":
@@ -353,21 +346,21 @@ def generate_article(topic):
         x = random.choice(topic["competitors"])
         title = topic["template"].format(x=x)
         content = ANALYSIS_TEMPLATE.format(x=x)
-        excerpt = f"CogView-4 vs {x}: honest comparison of quality, speed, and cost. 90% of quality at 10% of the price."
-        meta = f"CogView-4 vs {x}: in-depth AI image generation comparison. CogView-4 from $0.02/image."
+        excerpt = f"AiCanvas vs {x}: honest comparison of quality, speed, and cost. 90% of quality at 10% of the price."
+        meta = f"AiCanvas vs {x}: in-depth AI image generation comparison. AiCanvas from $0.02/image."
         return title, content, excerpt, meta, topic["keywords"]
 
     elif angle == "tips":
         t = random.choice(topic["topics"])
         prompts = PROMPT_STYLES.get(t, PROMPT_STYLES["Cinematic"])
-        p = prompts * 3  # 足够 10 个
+        p = prompts * 3
         title = topic["template"].format(t=t)
         content = TIPS_TEMPLATE.format(t=t, p1=p[0], p2=p[1 % len(p)], p3=p[2 % len(p)],
                                        p4=p[3 % len(p)], p5=p[4 % len(p)], p6=p[5 % len(p)],
                                        p7=p[6 % len(p)], p8=p[7 % len(p)], p9=p[8 % len(p)],
                                        p10=p[9 % len(p)])
-        excerpt = f"10 working {t} AI prompts for CogView-4. Proven templates that deliver great results every time."
-        meta = f"10 proven {t} AI image prompts for CogView-4. Get amazing results on AiCanvas."
+        excerpt = f"10 working {t} AI prompts that deliver great results every time."
+        meta = f"10 proven {t} AI image prompts. Get amazing results on AiCanvas."
         return title, content, excerpt, meta, topic["keywords"]
 
     elif angle == "trends":
@@ -393,23 +386,18 @@ def run_once(count=1):
 
         title, content, excerpt, meta_desc, keywords = result
 
-        # 先检查是否有相似标题已存在
         slug = m.slugify(title)
         existing = m.get_post_by_slug(slug)
         if existing:
-            # 尝试用 LLM 生成变体标题
-            print(f"[Generator] ⚠️  '{title}' 已存在，尝试用 AI 生成新标题...")
-            sys_prompt = "You are an AI blog writer. Generate a different title for an article about cheap AI image generation. Return ONLY the title, no quotes, no extra text."
-            user_prompt = f"Original title was: '{title}'\n\nGenerate a different but similar SEO-friendly title."
+            print(f"[Generator] ⚠️  '{title}' 已存在，尝试生成新标题...")
+            sys_prompt = "You are an AI blog writer. Generate a different title for an article about cheap AI image generation. Return ONLY the title."
+            user_prompt = f"Original title: '{title}'\n\nGenerate a different SEO-friendly title."
             new_title = generate_content(sys_prompt, user_prompt)
             if new_title and len(new_title) < 200:
                 title = new_title.strip().strip('"').strip("'")
             else:
                 print(f"[Generator] ⏭️  跳过重复文章")
                 continue
-
-        # 用 LLM 写更详细的内容（可选增强）
-        # 当前使用模板已经足够好，跳过 LLM 调用节省成本
 
         slug = m.create_post(title, content, excerpt, meta_desc, keywords)
         m.publish_post(m.get_post_by_slug(slug)["id"])
