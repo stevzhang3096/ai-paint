@@ -241,6 +241,12 @@ def reset_password():
     verify_codes.pop(email, None)
     return jsonify({"success": True, "message": "密码重置成功，请重新登录"})
 
+# ── 注册博客蓝图 ──
+from blog import blog_bp
+app.register_blueprint(blog_bp)
+from blog.models import init_blog_table
+init_blog_table()
+
 # ── 初始化 Admin ──
 # ── 初始化 Mail ──
 app.config['MAIL_SERVER'] = config.MAIL_CONFIG['server']
@@ -324,7 +330,12 @@ def index():
     return resp
 @app.route('/<path:path>')
 def static_files(path):
-    return send_from_directory(FRONTEND_DIR, path)
+    """静态文件服务 — 只 serve 前端目录中实际存在的文件"""
+    import os.path
+    filepath = os.path.join(FRONTEND_DIR, path)
+    if os.path.isfile(filepath):
+        return send_from_directory(FRONTEND_DIR, path)
+    return '', 404
 # ── 用户认证 API ──
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -408,7 +419,7 @@ def generate():
         return jsonify({"error": "请先登录"}), 401
     data = request.get_json()
     prompt = (data or {}).get('prompt', '').strip()
-    model = (data or {}).get('model', 'glm-image')
+    model = (data or {}).get('model', 'cogview-4')
     size = (data or {}).get('size', '1280x1280')
     if not prompt:
         return jsonify({"error": "prompt 不能为空"}), 400
@@ -615,8 +626,8 @@ def usdt_check_payment():
             credits_to_add = matched_plan['credits']
             plan_name = matched_plan['name']
         else:
-            # 按量：1 USDT ≈ 40 张
-            credits_to_add = int(amount * 40)
+            # 按量：1 张 = $0.02，即 1 USDT ≈ 50 张
+            credits_to_add = int(amount * 50)
             plan_name = f"按量充值 ${amount:.2f}"
 
         # 加额度 + 记录

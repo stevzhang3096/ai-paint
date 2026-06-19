@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ meta_title }}</title>
+    <meta name="description" content="{{ meta_description }}">
+    {% if meta_keywords %}
+    <meta name="keywords" content="{{ meta_keywords }}">
+    {% endif %}
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://paint.deepapi.pro/blog/{{ post.slug }}">
+    <link rel="alternate" type="application/rss+xml" title="AiCanvas Blog RSS" href="/feed.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ post.title }}">
+    <meta property="og:description" content="{{ meta_description }}">
+    <meta property="og:url" content="https://paint.deepapi.pro/blog/{{ post.slug }}">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="AiCanvas">
+    <meta property="article:published_time" content="{{ post.published_at.strftime('%Y-%m-%dT%H:%M:%SZ') if post.published_at else '' }}">
+    <meta property="article:author" content="{{ post.author }}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ post.title }}">
+    <meta name="twitter:description" content="{{ meta_description }}">
+
+    <!-- Structured Data: Article -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "{{ post.title }}",
+        "description": "{{ meta_description }}",
+        "author": {
+            "@type": "Person",
+            "name": "{{ post.author }}"
+        },
+        "datePublished": "{{ post.published_at.strftime('%Y-%m-%dT%H:%M:%SZ') if post.published_at else '' }}",
+        "dateModified": "{{ post.updated_at.strftime('%Y-%m-%dT%H:%M:%SZ') if post.updated_at else '' }}",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://paint.deepapi.pro/blog/{{ post.slug }}"
+        }
+    }
+    </script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #0f1117;
+            color: #e4e6ed;
+            line-height: 1.8;
+        }
+        a { color: #8b5cf6; text-decoration: none; }
+        a:hover { color: #a78bfa; text-decoration: underline; }
+
+        .nav {
+            border-bottom: 1px solid #1f2937;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        .nav a { color: #9ca3af; font-size: 14px; }
+        .nav a:hover { color: #e4e6ed; }
+        .nav .brand { font-weight: 700; font-size: 18px; color: #8b5cf6; }
+
+        .container { max-width: 720px; margin: 0 auto; padding: 40px 24px; }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+        .back-link:hover { color: #8b5cf6; }
+
+        h1 { font-size: 28px; line-height: 1.3; margin-bottom: 12px; }
+        .post-meta {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        /* ── 文章内容 ── */
+        .content { font-size: 16px; color: #d1d5db; }
+        .content h2 { font-size: 22px; margin: 32px 0 16px; color: #e4e6ed; }
+        .content h3 { font-size: 18px; margin: 24px 0 12px; color: #e4e6ed; }
+        .content p { margin-bottom: 16px; }
+        .content ul, .content ol { margin: 0 0 16px 24px; }
+        .content li { margin-bottom: 8px; }
+        .content code {
+            background: #1a1c25;
+            border: 1px solid #2a2d3a;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 14px;
+        }
+        .content pre {
+            background: #1a1c25;
+            border: 1px solid #2a2d3a;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin-bottom: 16px;
+        }
+        .content pre code {
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .content img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+        .content blockquote {
+            border-left: 3px solid #8b5cf6;
+            padding-left: 16px;
+            margin: 16px 0;
+            color: #9ca3af;
+        }
+        .content a { color: #8b5cf6; word-break: break-word; }
+        .content strong { color: #f3f4f6; }
+
+        /* ── CTA ── */
+        .cta-box {
+            background: linear-gradient(135deg, #1a1c25, #2a1a3a);
+            border: 1px solid #8b5cf633;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        .cta-box h3 { margin-bottom: 8px; color: #8b5cf6; }
+        .cta-box p { color: #9ca3af; font-size: 14px; margin-bottom: 16px; }
+        .cta-btn {
+            display: inline-block;
+            background: #8b5cf6;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .cta-btn:hover { background: #7c3aed; text-decoration: none; }
+
+        .footer {
+            text-align: center;
+            padding: 40px 24px;
+            color: #6b7280;
+            font-size: 13px;
+            border-top: 1px solid #1f2937;
+            margin-top: 40px;
+        }
+        .footer a { color: #6b7280; }
+        .footer a:hover { color: #8b5cf6; }
+
+        @media (max-width: 600px) {
+            .container { padding: 24px 16px; }
+            h1 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="/" class="brand">🎨 AiCanvas</a>
+        <a href="/">Home</a>
+        <a href="/blog/">Blog</a>
+        <a href="/feed.xml">RSS</a>
+    </nav>
+
+    <main class="container">
+        <a href="/blog/" class="back-link">← Back to Blog</a>
+
+        <article>
+            <h1>{{ post.title }}</h1>
+            <div class="post-meta">
+                By {{ post.author }} ·
+                {% if post.published_at %}
+                    {{ post.published_at.strftime('%B %d, %Y') }}
+                {% endif %}
+                · <a href="/blog/">Blog</a>
+            </div>
+
+            <div class="content">
+                {{ post.content | safe }}
+            </div>
+        </article>
+
+        <div class="cta-box">
+            <h3>🎨 Try AiCanvas Yourself</h3>
+            <p>Generate stunning AI images for as low as $0.02 per image. No subscription, pay as you go with USDT.</p>
+            <a href="https://paint.deepapi.pro" class="cta-btn">Start Generating →</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p><a href="/">AiCanvas</a> — Affordable AI image generation powered by CogView-4</p>
+        <p style="margin-top:4px;"><a href="/feed.xml">RSS Feed</a> · <a href="/sitemap.xml">Sitemap</a></p>
+    </footer>
+</body>
+</html>

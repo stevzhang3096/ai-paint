@@ -470,8 +470,9 @@ html[lang="zh"] .lang-en { display: none; }
     <div class="prompt-area">
       <textarea class="prompt-input" id="promptInput" placeholder="描述你想要的图片，支持中英文...&#10;例如：a cute cat wearing a wizard hat, digital art style"></textarea>
     </div>
-    <div class="card-label"><span class="i18n-select-model">📐 Select Model</span></div>
-    <div class="option-row" id="modelRow"></div>
+    <!-- 模型选择已隐藏，默认 CogView-4 -->
+    <!-- <div class="card-label"><span class="i18n-select-model">📐 Select Model</span></div> -->
+    <!-- <div class="option-row" id="modelRow"></div> -->
     <div class="card-label"><span class="i18n-select-size">📏 Select Size</span></div>
     <div class="option-row" id="sizeRow"></div>
     <button class="btn-generate" id="genBtn" onclick="generate()"><span class="i18n-generate-btn">✨ Generate</span></button>
@@ -540,7 +541,7 @@ html[lang="zh"] .lang-en { display: none; }
       </div>
       <div style="margin-top:16px">
         <label style="font-size:12px;color:#9ca3af;display:block;margin-bottom:6px">🔗 <span class="i18n-txid-label">Transaction Hash (TxID)</span></label>
-        <input type="text" id="usdtTxidInput" placeholder="Paste TRC-20 TxID" style="width:100%;padding:12px;background:#13151d;border:1px solid #2a2d3a;border-radius:10px;color:#e4e6ed;font-size:14px;outline:none;box-sizing:border-box">
+        <input type="text" id="usdtTxidInput" class="i18n-txid-label" placeholder="Paste TRC-20 TxID" style="width:100%;padding:12px;background:#13151d;border:1px solid #2a2d3a;border-radius:10px;color:#e4e6ed;font-size:14px;outline:none;box-sizing:border-box">
       </div>
       <div id="usdtCheckStatus" style="text-align:center;margin:10px 0;font-size:13px;color:#9ca3af;display:none"></div>
       <button class="btn btn-primary" id="usdtCheckBtn" onclick="checkUsdtPayment()" style="width:100%;padding:12px;margin-top:8px"><span class="i18n-verify-btn">🔍 Verify Payment</span></button>
@@ -664,6 +665,11 @@ var _i18n = {en:{
   txid_placeholder: 'Paste TRC-20 TxID',
   verify_btn: '🔍 Verify Payment',
   verifying: '⏳ Checking on-chain...',
+  checking_tron: 'Querying TronScan...',
+  not_found_retry: 'Transaction not found, please check and retry',
+  retry_verify: '✓ Transferred, re-verify',
+  verify_fail: '❌ Verification failed, please retry',
+  input_txid: '⚠️ Please paste your transaction hash (TxID)',
   close: 'Close',
   cancel: 'Cancel',
   fill_all: 'Please fill in all fields',
@@ -758,6 +764,11 @@ var _i18n = {en:{
   txid_placeholder: '粘贴 TRC-20 转账的 TxID',
   verify_btn: '🔍 验证到账',
   verifying: '⏳ 正在验证链上到账...',
+  checking_tron: '正在查询 TronScan...',
+  not_found_retry: '暂未检测到转账，请确认已转账后重试',
+  retry_verify: '✅ 已完成转账，重新验证',
+  verify_fail: '❌ 验证失败，请稍后重试',
+  input_txid: '⚠️ 请先粘贴交易哈希 (TxID)',
   close: '关闭',
   cancel: '取消',
   fill_all: '请填写完整',
@@ -803,10 +814,10 @@ var m={".i18n-hero":"hero",".i18n-hero-highlight":"hero_highlight",".i18n-hero-s
 ,".i18n-orders-title":"orders_menu",".i18n-close-order":"close"
 };
 for(var sel in m){document.querySelectorAll(sel).forEach(function(el){el.innerHTML=t(m[sel]);});}
-var pi=document.getElementById("promptInput");if(pi&&!pi.dataset.i18nSet)pi.placeholder=t("placeholder_text");var fpi=document.getElementById("forgotNewPwd");if(fpi)fpi.placeholder=t("new_pwd");
+var pi=document.getElementById("promptInput");if(pi&&!pi.dataset.i18nSet)pi.placeholder=t("placeholder_text");var txi=document.getElementById("usdtTxidInput");if(txi)txi.placeholder=t("txid_placeholder");var fpi=document.getElementById("forgotNewPwd");if(fpi)fpi.placeholder=t("new_pwd");
 var cb=document.getElementById("creditsCount");var cu=document.getElementById("creditsUnit");
 if(cb){var c=state&&state.user?state.user.credits:0;cb.textContent=c;}if(cu)cu.innerHTML=t("credits_left");
-if(typeof renderModelChips==="function")renderModelChips();if(typeof renderSizeChips==="function")renderSizeChips();
+if(typeof renderSizeChips==="function")renderSizeChips();
 var rf=document.getElementById("resultArea");if(rf){rf.querySelectorAll(".btn-download").forEach(function(b){var txt=b.textContent;if(txt.indexOf("ownload")>-1||txt.indexOf("下载")>-1)b.textContent=t("download_btn");else if(txt.indexOf("Share")>-1||txt.indexOf("分享")>-1||txt.indexOf("Copy")>-1||txt.indexOf("复制")>-1)b.textContent=t("copy_link");else if(txt.indexOf("Try")>-1||txt.indexOf("再试")>-1)b.textContent=t("retry_btn");});}
 var hg=document.getElementById("historyGrid");if(hg){hg.querySelectorAll(".btn-download").forEach(function(b){b.textContent=t("download_btn");});}
 }
@@ -816,7 +827,7 @@ let state = {
   user: null,
   models: {},
   sizes: [],
-  selectedModel: 'glm-image',
+  selectedModel: 'cogview-4',
   selectedSize: '1280x1280'
 };
 
@@ -853,7 +864,6 @@ async function loadModels() {
     const data = await res.json();
     state.models = data.models;
     state.sizes = data.sizes || ['1280x1280'];
-    renderModelChips();
     renderSizeChips();
   } catch(e) {}
 }
@@ -1437,17 +1447,17 @@ async function checkUsdtPayment() {
   var btn = document.getElementById('usdtCheckBtn');
   var status = document.getElementById('usdtCheckStatus');
   btn.disabled = true;
-  btn.textContent = '⏳ 正在验证链上到账...';
+  btn.textContent = t('verifying');
   status.style.display = 'block';
-  status.textContent = '正在查询 TronScan...';
+  status.textContent = t('checking_tron');
   status.style.color = '#f59e0b';
 
   var txid = document.getElementById('usdtTxidInput').value.trim();
   if (!txid) {
-    toast('⚠️ 请先粘贴交易哈希 (TxID)', 'error');
+    toast(t('input_txid'), 'error');
     checkUsdtLoading = false;
     btn.disabled = false;
-    btn.textContent = '🔍 验证到账';
+    btn.textContent = t('verify_btn');
     return;
   }
 
@@ -1474,16 +1484,16 @@ toast(t('payment_success') + data.credits_added + ' ' + t('credits_left'), 'succ
       // 3秒后关闭弹窗
       setTimeout(function() { closePlansModal(); }, 3000);
     } else {
-      status.textContent = data.message || '暂未检测到转账，请确认已转账后重试';
+      status.textContent = data.message || t('not_found_retry');
       status.style.color = '#f59e0b';
       btn.disabled = false;
-      btn.textContent = '✅ 已完成转账，重新验证';
+      btn.textContent = t('retry_verify');
     }
   } catch(e) {
-    status.textContent = '❌ 验证失败，请稍后重试';
+    status.textContent = t('verify_fail');
     status.style.color = '#ef4444';
     btn.disabled = false;
-    btn.textContent = '✅ 已完成转账，重新验证';
+    btn.textContent = t('retry_verify');
     toast('❌ 网络错误', 'error');
   } finally {
     checkUsdtLoading = false;
