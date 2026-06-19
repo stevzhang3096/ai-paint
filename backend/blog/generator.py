@@ -17,7 +17,7 @@ import config as app_config
 import blog.models as m
 
 API_BASE = "https://api.deepapi.pro/v1"
-API_KEY = ***"DEEPAPI_KEY", "")
+API_KEY = os.environ.get("DEEPAPI_KEY", "")
 
 # ── 主题池 ──
 TOPICS = [
@@ -255,9 +255,9 @@ PROMPT_STYLES = {
 def get_api():
     """返回 (base_url, api_key) 或 None"""
     if API_KEY:
-        *** API_BASE, API_KEY
+        return API_BASE, API_KEY
     if app_config.ZHIPU_API_KEY:
-        *** None, app_config.ZHIPU_API_KEY
+        return None, app_config.ZHIPU_API_KEY
     return None, None
 
 
