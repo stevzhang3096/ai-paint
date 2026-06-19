@@ -78,6 +78,8 @@
     white-space: nowrap; padding: 8px 12px;
   }
   .header-right { display: flex; gap: 12px; align-items: center; position: relative; }
+  .blog-link { color: #9ca3af; font-size: 14px; font-weight: 500; transition: color .2s; text-decoration: none; padding: 8px 6px; }
+  .blog-link:hover { color: #8b5cf6; text-decoration: none; }
   .user-menu-wrap { position: relative; display: none; }
   .user-menu-trigger {
     padding: 8px 16px; border-radius: 10px; border: 1px solid #3b3f4f;
@@ -407,6 +409,7 @@ html[lang="zh"] .lang-en { display: none; }
       <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">EN</button>
       <button class="lang-btn" data-lang="zh" onclick="switchLang('zh')">中</button>
     </div>
+    <a href="/blog/" class="blog-link">📝 Blog</a>
 
     <span class="credits-badge" id="creditsBadge">🪙 <span id="creditsCount">0</span> <span class="i18n-credits-unit" id="creditsUnit">shots</span></span>
     <button class="btn btn-outline" id="loginBtn" onclick="showLogin()"><span class="i18n-login">Log In</span></button>
